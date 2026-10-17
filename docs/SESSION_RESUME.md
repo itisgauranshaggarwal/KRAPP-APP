@@ -25,7 +25,7 @@ You are continuing work on KRAPP APP (repo: E:\KRAPP-APP).
 Context:
 - Read docs/DOCUMENTATION.md, docs/PRD.md, docs/TODO.md, README.md fully.
 - Project: WhatsApp-like 1:1 chat app, neumorphic light/dark, username-based invites, free tiers only (Cloudflare Pages + Supabase).
-- Rules: username+password login only (email immutable), profile pic only after acceptance, single intro msg on invite, keep last 5 msgs per chat (daily purge), media deleted daily regardless, 1:1 MVP.
+- Rules: username+password login only, profile editable (incl. email), profile pic only after acceptance, single intro msg on invite, keep last 5 msgs per chat (daily purge), media deleted daily regardless, 1:1 MVP.
 - Current phase: Phase 1 (UI Foundation). Start from TODO.md Phase 1.1 onward.
 
 Goal: Continue implementation in order (UI -> UX -> Realtime Texting -> Media). Don't guess - ask if any ambiguity. Update docs as you go (DOCUMENTATION.md decisions log, TODO.md checkboxes).

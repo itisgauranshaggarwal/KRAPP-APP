@@ -23,7 +23,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       {label ? (
         <label
           htmlFor={inputId}
-          className="mb-2 block text-sm font-medium text-muted"
+          className="mb-2 block text-xs font-semibold tracking-wide text-muted uppercase"
         >
           {label}
         </label>
@@ -32,8 +32,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       <div
         className={cn(
           'neu-inset flex items-center gap-2 rounded-xl px-3.5',
-          'transition-shadow duration-150 focus-within:ring-2 focus-within:ring-[var(--ring)]',
-          error && 'ring-2 ring-danger/60',
+          'transition-[box-shadow,outline-color] duration-150',
+          'focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-[var(--ring)]',
+          error && 'outline-2 outline-offset-1 outline-[var(--danger)]',
         )}
       >
         {leadingIcon ? <span className="text-faint">{leadingIcon}</span> : null}
@@ -53,7 +54,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       </div>
 
       {error ? (
-        <p id={`${inputId}-error`} className="mt-1.5 text-xs text-danger">
+        <p id={`${inputId}-error`} className="mt-1.5 text-xs font-medium text-danger">
           {error}
         </p>
       ) : hint ? (

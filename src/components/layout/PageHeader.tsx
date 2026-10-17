@@ -8,6 +8,8 @@ import { cn } from '@/lib/utils'
 export interface PageHeaderProps {
   title: string
   subtitle?: ReactNode
+  /** Optional node rendered before the title (e.g. an avatar). */
+  leading?: ReactNode
   /** Show a back button (mobile push screens). */
   back?: boolean
   onBack?: () => void
@@ -18,6 +20,7 @@ export interface PageHeaderProps {
 export function PageHeader({
   title,
   subtitle,
+  leading,
   back = false,
   onBack,
   actions,
@@ -28,7 +31,8 @@ export function PageHeader({
   return (
     <header
       className={cn(
-        'flex items-center gap-3 border-b border-line px-4 py-3',
+        'sticky top-0 z-20 flex items-center gap-2.5 border-b border-line bg-surface/70 px-3 py-2.5 backdrop-blur-xl',
+        'supports-[backdrop-filter]:bg-surface/60 sm:px-4',
         className,
       )}
     >
@@ -43,12 +47,18 @@ export function PageHeader({
         </IconButton>
       ) : null}
 
+      {leading ? <div className="shrink-0">{leading}</div> : null}
+
       <div className="min-w-0 flex-1">
-        <h1 className="truncate text-base font-semibold text-text">{title}</h1>
-        {subtitle ? <div className="truncate text-xs text-muted">{subtitle}</div> : null}
+        <h1 className="truncate text-[15px] font-semibold tracking-[-0.01em] text-text">{title}</h1>
+        {subtitle ? (
+          <div className="truncate text-xs text-muted">{subtitle}</div>
+        ) : null}
       </div>
 
-      {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}
+      {actions ? (
+        <div className="flex shrink-0 items-center gap-0.5">{actions}</div>
+      ) : null}
     </header>
   )
 }

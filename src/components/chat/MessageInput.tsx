@@ -53,10 +53,20 @@ export function MessageInput({
   const hasText = value.trim().length > 0
 
   return (
-    <div className={cn('border-t border-line px-3 py-3 sm:px-6', className)}>
+    <div
+      className={cn(
+        'relative z-10 border-t border-line bg-surface/70 px-3 py-3 backdrop-blur-xl sm:px-6',
+        className,
+      )}
+    >
       <div className="mx-auto flex max-w-3xl items-end gap-2">
         {/* Media actions arrive in Phase 4. */}
-        <IconButton label="Attach a file" variant="neu" className="hidden sm:inline-flex">
+        <IconButton
+          label="Attach a file"
+          variant="ghost"
+          className="hidden sm:inline-flex"
+          disabled={disabled}
+        >
           <Paperclip className="size-5" />
         </IconButton>
 
@@ -87,7 +97,13 @@ export function MessageInput({
         </div>
 
         {hasText ? (
-          <IconButton label="Send message" variant="primary" onClick={submit} disabled={disabled}>
+          <IconButton
+            label="Send message"
+            variant="primary"
+            className="animate-pop"
+            onClick={submit}
+            disabled={disabled}
+          >
             <SendHorizontal className="size-5" />
           </IconButton>
         ) : (

@@ -80,29 +80,35 @@ High-level (to be detailed during implementation):
 
 ## 5. Design System
 
-**Style:** Neumorphism  
+**Style:** Neumorphism (restrained — crisp shadows, tight radii, real hierarchy)  
+**Brand:** "Grape" violet `#7C5CFF` + "Sunset" coral accent `#FF5C7F` on lavender-grey surfaces (deliberately not WhatsApp green / Telegram blue / Discord blurple / Snapchat yellow)  
 **Modes:** Light / Dark / System (class-based `.dark` on `<html>`, persisted in `localStorage['krapp.theme']`)  
 **Typography:** Fira Sans (self-hosted)  
-**Layout:** WhatsApp-like — desktop: icon rail + list column + chat pane; mobile: list ⇄ full-screen chat + bottom nav
+**Layout:** desktop — icon rail + list column + chat pane; mobile — list ⇄ full-screen chat + bottom nav  
+**Inspiration:** Instagram (profile hero, story ring, stats), Telegram/WhatsApp (chat list, composer), playful gradient identity for a younger audience.
 
-### Tokens (in `src/index.css`)
-- Surfaces: light `--bg #e5e9f0`, `--surface-2 #dfe4ec`; dark `--bg #22262d`, `--surface-2 #1d2127`
-- Text: `--text`, `--text-muted`, `--text-faint`
-- Brand: `--primary #12a15c` (light) / `#22c55e` (dark) — WhatsApp-ish green; `--primary-soft`
-- Status: `--danger #e5484d`, `--warning #f5a524`, `--success`, `--online`
-- Neumorphic shadow pair: `--shadow-light` / `--shadow-dark` (inverted per theme)
-- Bubbles: `--bubble-in` (grey), `--bubble-out` (green), `--bubble-out-text`
-- Radius: `--radius-neu 1.25rem`, `--radius-app 1rem`
+### Brand tokens
+- Brand ramp: `--brand-1 #7c5cff`, `--brand-2 #a95cff`, `--brand-3 #ff5c7f` (used by `brand-gradient`)
+- Surfaces (light): `--bg/--surface #ebe9f4`, `--surface-2 #e2dff0`, `--surface-3 #d8d4e9`; (dark): `#161521`, `#201e2e`, `#282539`
+- Text: `--text`, `--text-muted`, `--text-faint` (contrast-tuned per mode)
+- Semantic: `--primary` (light `#7c5cff` / dark `#8b6cff`), `--accent` coral, `--success`, `--online` mint, `--danger`, `--warning`
+- Neumorphic pair: `--shadow-light` / `--shadow-dark` (inverted per theme)
+- Bubbles: `--bubble-in` (near-white in light, raised panel in dark), `--bubble-out` (violet gradient), `--bubble-in-text`, `--bubble-out-text`
+- Radii: `--radius-neu 1rem`, `--radius-app 0.875rem`
+- Motion: `--ease-out`, `--ease-spring`
 
-Tailwind v4 `@theme inline` maps these to utilities (`bg-surface`, `text-muted`, `bg-bubble-out`, …).
+Tailwind v4 `@theme inline` maps these to utilities (`bg-surface`, `text-muted`, `bg-bubble-in`, `text-primary-contrast`, …).
 
-### Neumorphic utilities (`@utility` in `src/index.css`)
-`neu-raised`, `neu-raised-sm`, `neu-raised-lg`, `neu-inset`, `neu-inset-sm`, `neu-press` (raised→inset on `:active`), `neu-divider`, and `.scroll-soft` scrollbar styling.
+### Utility layer (`@utility` in `src/index.css`)
+- Neumorphic: `neu-raised`, `neu-raised-sm`, `neu-raised-lg`, `neu-inset`, `neu-inset-sm`, `neu-flat`, `neu-press` (raised→inset on `:active`), `neu-divider`
+- Brand: `brand-gradient`, `brand-gradient-soft`, `text-gradient`, `glow-brand`
+- Misc: `app-texture` (dot pattern), `hairline` (inset 1px ring), `scroll-soft`
+- Animations: `animate-rise`, `animate-fade`, `animate-pop`, `typing-bounce` keyframes (disabled under `prefers-reduced-motion`)
 
 ## 6. Database Schema
 
 **Tables (planned):**
-- `users` (profile): id (uuid, matches auth.users), display_name, username (unique), email (unique, immutable), avatar_url, created_at, updated_at, last_seen_at (for presence)
+- `users` (profile): id (uuid, matches auth.users), display_name, username (unique), email (unique, editable in Profile), avatar_url, created_at, updated_at, last_seen_at (for presence)
 - `contacts`: id, requester_id, addressee_id, status (pending|accepted|rejected), intro_message_id? or store intro separately, created_at, updated_at
 - `conversations`: id (uuid), user1_id, user2_id, created_at, updated_at (1:1; enforce uniqueness)
 - `messages`: id, conversation_id, sender_id, type (text|image|voice|file), content, media_url, media_metadata (jsonb), is_intro (bool), read_by (json/array or separate receipts), created_at, deleted_at? (or hard delete on purge)
@@ -129,7 +135,7 @@ To be filled during implementation.
 - **Signup:** POST-like via Supabase Auth (email+password). Then create `users` profile with display_name, username, email. Check username unique.
 - **Signin:** email+password via Supabase Auth. But UI is username+password - so we resolve username -> email first, then sign in. Document exact approach.
 - **Session:** onAuthStateChange; persist.
-- **Profile edit:** update allowed fields (username/display_name/avatar). Email immutable.
+- **Profile edit:** update allowed fields (username/display_name/email/avatar/bio).
 - **Delete account:** cascade delete profile + auth user.
 
 ## 9. Contacts & Invite Flow
@@ -209,8 +215,9 @@ src/
 | Neumorphic design | ✅ Done | Tokens + utilities in index.css |
 | Light/Dark mode | ✅ Done | light/dark/system + no-flash script |
 | New contact dialog | ✅ Done | Username search + single intro message |
-| Profile UI | ✅ Done | Edit, email readonly note, theme, delete account |
+| Profile UI | ✅ Done | Hero + stats + edit (incl. **email** + bio), theme, delete account |
 | Safety notice | ✅ Done | Auth screens + Profile |
+| Brand identity | ✅ Done | "Grape" violet + "Sunset" coral (own system, not WhatsApp green) |
 | Supabase integration | ⏳ Not started | Phase 3 |
 | Auth (username+password) | ⏳ Not started | Mock nav only |
 | Contacts/invites (real) | ⏳ Not started | Mock state only |
@@ -249,6 +256,11 @@ Use this section to record every significant decision with rationale, date, and 
 | 2026-10-17 | Default avatar = WhatsApp-style silhouette (icon), initials mode available | Matches product requirement | `Avatar` supports `fallback="icon" \| "initials"` |
 | 2026-10-17 | Guard/routing: no auth guard yet (all routes open) | Phase 2 adds route guards | Tracked in TODO 2.6 |
 | 2026-10-17 | Retained `oxlint` (scaffold default); Prettier deferred | Reduce setup churn now | Revisit Phase 2/5 |
+| 2026-10-17 | **Brand change:** own palette "Grape" `#7C5CFF` + "Sunset" `#FF5C7F`, lavender-grey neumorphic surfaces | User asked to drop the WhatsApp green/black system and create a distinct identity | All tokens + utilities rewritten in `src/index.css`; `index.html` theme-color updated |
+| 2026-10-17 | **Neumorphism kept but restrained** (tight radii, crisper shadows, texture, real hierarchy) | Original style was too "blobby"/generic; user called it AI slop | Smaller radii (`rounded-xl/2xl`), added `hairline`, `app-texture`, `glow-brand`, brand wash behind the shell |
+| 2026-10-17 | **Email is now editable** (reverses earlier "immutable" rule) | User requested it | Signup warning removed; Profile has an editable email field; `updateProfile` accepts `email`; DB `email` must no longer be immutable (update PRD 6.x) |
+| 2026-10-17 | Added editable `bio` + profile stats row | Profile looked sparse/unfinished | `User.bio` already existed; stats derived from contacts/chats/requests |
+| 2026-10-17 | Auth screens get a two-column desktop layout (brand panel + form) | Make first-run feel designed, not a plain card | `AuthLayout` responsive: panel `lg+`, form card always |
 
 ## 16. Known Issues & Tech Debt
 
@@ -275,14 +287,26 @@ Use this section to record every significant decision with rationale, date, and 
 - Built UI primitives: Button, IconButton, Input, Avatar, Badge/CountBadge, Modal, Switch, Tabs, Skeleton, EmptyState.
 - Built shared: AppLogo, ThemeToggle, SafetyNotice; ThemeProvider (light/dark/system, no-flash inline script in `index.html`).
 - Built layout: AppShell, IconRail (desktop), BottomNav (mobile), PageHeader.
-- Built pages: Login, Signup (email immutable warning), Chats (list + chat pane), ChatDetail, Requests (accept/reject), Contacts, Profile (edit + email note + theme + delete account + about), NotFound.
+- Built pages: Login, Signup, Chats (list + chat pane), ChatDetail, Requests (accept/reject), Contacts, Profile (edit + theme + delete account + about), NotFound.
 - Built chat UI: bubbles, day separators, delivery ticks, typing bubble, auto-grow input, mic placeholder.
 - Built `NewContactDialog` (username search → confirm → single intro message → sent state).
 - Introduced `AppDataProvider` (mock data + actions) to drive the UI.
 - Installed skills earlier (Session 2 pre-work): ui-ux-pro-max, supabase, frontend-design, frontend-ui-ux, impeccable-design-polish, web-design-guidelines, web-interface-guidelines, shadcn-ui, react-expert, component-design, react-architecture.
 - Fixed install issues (see Known Issues). `npm run build` ✅, `npm run lint` ✅, dev server smoke test ✅.
 - Fixed `lucide-react` missing `.d.ts` by extracting from the npm tarball (`dist/lucide-react*.d.ts`).
-- Next: begin Phase 2 (UX polish: route guards, form validation, loading/empty states, a11y, code splitting).
+
+**Session 3 (2026-10-17) — Brand & UI polish**
+- **Replaced the WhatsApp-green design with an own brand system:** "Grape" violet `#7C5CFF` + "Sunset" coral `#FF5C7F` on lavender-grey neumorphic surfaces. Rewrote `src/index.css` (tokens, `@theme inline`, new utilities: `brand-gradient`, `brand-gradient-soft`, `text-gradient`, `glow-brand`, `neu-flat`, `app-texture`, `hairline`; animations `rise`/`fade`/`pop`/`typing-bounce`; contrast-tuned text).
+- **Removed the "AI slop" tells:** smaller consistent radii, crisper shadows, hairlines for definition, uppercase tracked micro-labels, real type hierarchy instead of oversized soft blobs.
+- **Nav bar:** `IconRail` now has a brand-gradient active pill + left indicator bar, hover states, description tooltips, and an avatar profile entry with a gradient ring. `BottomNav` has a gradient top indicator, `primary-soft` active pill, icon scale and press feedback.
+- **Main window:** `AppShell` gets a soft brand atmosphere (violet/coral glows); chat area and pages get a subtle dot texture; translucent blurred headers and composer (`PageHeader`, `MessageInput`); glassy chat-list column.
+- **Chat:** gradient outgoing bubbles + near-white incoming bubbles, message grouping (tighter gaps, animated `rise` on arrival), day-separator pills, animated typing bubble, ticks tuned for violet.
+- **Profile:** full redesign — gradient cover hero, story-ring avatar, bio, a stats row (contacts/chats/pending) and grouped settings sections; **email is now editable** (with validation) and `bio` added.
+- **Auth:** two-column desktop layout (brand panel + form), gradient logo mark; removed the "email can't be changed later" warning.
+- Icons/palette: `avatarColor` palette re-aligned to the brand.
+- Docs updated (design system, decisions, features, PRD/TODO/SESSION_RESUME for editable email).
+- Verified: `tsc -b` ✅, `npm run build` ✅, `npm run lint` ✅ (warnings only), dev-server smoke test ✅.
+- Next: begin Phase 2 (route guards, form validation, loading/empty states, a11y focus trap, code splitting).
 
 ## 18. Setup Instructions
 

@@ -3,7 +3,10 @@ import { Check, CheckCheck } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { MessageStatus } from '@/types'
 
-/** WhatsApp-style delivery ticks (only shown on your own messages). */
+/**
+ * Delivery ticks (only shown on your own messages, which sit on the brand
+ * gradient — so they are tuned for a light-on-violet contrast).
+ */
 export function MessageStatusTicks({
   status,
   className,
@@ -13,15 +16,15 @@ export function MessageStatusTicks({
 }) {
   if (status === 'sending') {
     return (
-      <span className={cn('inline-flex', className)} title="Sending">
-        <Check className="size-3.5 opacity-60" aria-hidden />
+      <span className={cn('inline-flex text-white/60', className)} title="Sending">
+        <Check className="size-3.5" aria-hidden />
       </span>
     )
   }
 
   if (status === 'sent') {
     return (
-      <span className={cn('inline-flex', className)} title="Sent">
+      <span className={cn('inline-flex text-white/80', className)} title="Sent">
         <Check className="size-3.5" aria-hidden />
       </span>
     )
@@ -29,7 +32,7 @@ export function MessageStatusTicks({
 
   return (
     <span
-      className={cn('inline-flex', className, status === 'seen' && 'text-sky-300')}
+      className={cn('inline-flex text-white/80', className, status === 'seen' && 'text-[#a9e7ff]')}
       title={status === 'seen' ? 'Seen' : 'Delivered'}
     >
       <CheckCheck className="size-3.5" aria-hidden />

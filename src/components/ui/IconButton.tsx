@@ -8,14 +8,15 @@ type Size = 'sm' | 'md' | 'lg'
 const variants: Record<Variant, string> = {
   neu: 'neu-press text-muted hover:text-primary',
   ghost: 'bg-transparent text-muted hover:bg-surface-2 hover:text-text',
-  primary: 'bg-primary text-primary-contrast hover:bg-primary-hover active:translate-y-px',
+  primary:
+    'brand-gradient text-primary-contrast glow-brand hover:brightness-[1.07] active:translate-y-px',
   danger: 'bg-danger text-white hover:brightness-110 active:translate-y-px',
 }
 
 const sizes: Record<Size, string> = {
   sm: 'size-9 rounded-lg',
   md: 'size-11 rounded-xl',
-  lg: 'size-12 rounded-2xl',
+  lg: 'size-12 rounded-xl',
 }
 
 export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -37,8 +38,8 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
       title={label}
       className={cn(
         'inline-flex shrink-0 items-center justify-center',
-        'transition-[box-shadow,background-color,color,transform] duration-150',
-        'disabled:pointer-events-none disabled:opacity-55',
+        'transition-[box-shadow,background-color,color,transform,filter] duration-150',
+        'active:scale-95 disabled:pointer-events-none disabled:opacity-55',
         variants[variant],
         sizes[size],
         className,

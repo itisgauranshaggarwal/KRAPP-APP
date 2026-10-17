@@ -13,31 +13,31 @@ export interface MessageBubbleProps {
 
 export function MessageBubble({ message, mine, showTicks = true }: MessageBubbleProps) {
   return (
-    <div className={cn('flex w-full', mine ? 'justify-end' : 'justify-start')}>
+    <div className={cn('flex w-full animate-rise', mine ? 'justify-end' : 'justify-start')}>
       <div
         className={cn(
-          'relative max-w-[78%] rounded-2xl px-3.5 py-2 text-sm shadow-[2px_2px_6px_var(--shadow-dark)] sm:max-w-[65%]',
+          'relative max-w-[80%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed sm:max-w-[68%]',
           mine
-            ? 'rounded-br-md bg-bubble-out text-bubble-out-text'
-            : 'rounded-bl-md bg-bubble-in text-text',
+            ? 'rounded-br-md brand-gradient text-bubble-out-text shadow-[0_8px_20px_-10px_var(--primary)]'
+            : 'rounded-bl-md bg-bubble-in text-bubble-in-text ring-1 ring-[var(--border)]',
         )}
       >
         {message.isIntro ? (
           <p
             className={cn(
-              'mb-1 flex items-center gap-1 text-[11px] font-medium',
-              mine ? 'text-white/80' : 'text-primary',
+              'mb-1 flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase',
+              mine ? 'text-white/85' : 'text-primary',
             )}
           >
             Invite message
           </p>
         ) : null}
 
-        <p className="whitespace-pre-wrap break-words">{message.content}</p>
+        <p className="break-words whitespace-pre-wrap">{message.content}</p>
 
         <div
           className={cn(
-            'mt-1 flex items-center justify-end gap-1 text-[11px]',
+            'mt-1 flex items-center justify-end gap-1 text-[11px] tabular-nums',
             mine ? 'text-white/75' : 'text-faint',
           )}
         >

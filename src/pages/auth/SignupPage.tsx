@@ -1,4 +1,4 @@
-import { AtSign, Eye, EyeOff, Lock, TriangleAlert, User as UserIcon } from 'lucide-react'
+import { AtSign, Eye, EyeOff, Lock, User as UserIcon } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -123,12 +123,8 @@ export function SignupPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           error={errors.email}
+          hint="Used for your account only. You can change it later."
         />
-
-        <p className="flex items-center gap-1.5 text-xs text-warning">
-          <TriangleAlert className="size-3.5 shrink-0" aria-hidden />
-          Email can&apos;t be changed later.
-        </p>
 
         <Input
           label="Password"

@@ -3,85 +3,118 @@
 /* Class-based dark mode (toggled by adding/removing `.dark` on <html>) */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ---------------------------------------------------------------------------
- * KRAPP APP - Design tokens
- * Style: Neumorphism (soft UI). Light + Dark.
- * Font: Fira Sans (self-hosted via @fontsource).
- * ------------------------------------------------------------------------- */
+/* ===========================================================================
+ * KRAPP APP — design system
+ * ---------------------------------------------------------------------------
+ * Brand: "Grape" (violet #7C5CFF) with a "Sunset" coral accent (#FF6B8A).
+ * Style: restrained neumorphism (soft UI). Crisp shadows, tight radii,
+ *        real hierarchy — no oversized floating blobs.
+ * Font:  Fira Sans (self-hosted).
+ * =========================================================================== */
 
 :root {
-  /* Surfaces */
-  --bg: #e5e9f0;
-  --bg-elevated: #e9edf3;
-  --surface: #e5e9f0;
-  --surface-2: #dfe4ec;
+  /* Brand primitives */
+  --brand-1: #7c5cff;
+  --brand-2: #a95cff;
+  --brand-3: #ff6b8a;
+
+  /* Surfaces — light */
+  --bg: #ebe9f4;
+  --bg-elevated: #f1eff9;
+  --surface: #ebe9f4;
+  --surface-2: #e2dff0;
+  --surface-3: #d8d4e9;
 
   /* Text */
-  --text: #2c313a;
-  --text-muted: #6b7482;
-  --text-faint: #97a0ad;
+  --text: #232134;
+  --text-muted: #67647e;
+  --text-faint: #7d7994;
 
-  /* Brand */
-  --primary: #12a15c;
-  --primary-hover: #0e8b4f;
+  /* Brand semantic */
+  --primary: #7c5cff;
+  --primary-hover: #6d4dff;
+  --primary-active: #5c3ce0;
   --primary-contrast: #ffffff;
-  --primary-soft: rgba(18, 161, 92, 0.12);
+  --primary-soft: rgba(124, 92, 255, 0.12);
+  --primary-ring: rgba(124, 92, 255, 0.42);
+
+  --accent: #ff5c7f;
+  --accent-soft: rgba(255, 92, 127, 0.14);
 
   /* Status */
-  --danger: #e5484d;
-  --danger-soft: rgba(229, 72, 77, 0.12);
-  --warning: #f5a524;
-  --success: #12a15c;
-  --online: #22c55e;
+  --danger: #f0425c;
+  --danger-soft: rgba(240, 66, 92, 0.12);
+  --warning: #a86a00;
+  --warning-soft: rgba(224, 140, 11, 0.16);
+  --success: #12a877;
+  --online: #1fc98b;
 
-  /* Borders / lines */
-  --border: rgba(44, 49, 58, 0.08);
-  --border-strong: rgba(44, 49, 58, 0.16);
+  /* Lines */
+  --border: rgba(35, 33, 52, 0.09);
+  --border-strong: rgba(35, 33, 52, 0.16);
 
   /* Neumorphic shadow pair */
   --shadow-light: #ffffff;
-  --shadow-dark: #c2c9d6;
+  --shadow-dark: #c5c1d9;
+
+  /* Decorative texture dot */
+  --texture-dot: rgba(35, 33, 52, 0.055);
 
   /* Focus ring */
-  --ring: rgba(18, 161, 92, 0.45);
+  --ring: rgba(124, 92, 255, 0.45);
 
-  /* Bubbles */
-  --bubble-in: #dfe4ec;
-  --bubble-out: #12a15c;
+  /* Chat bubbles */
+  --bubble-in: #f6f5fc;
+  --bubble-in-text: #232134;
+  --bubble-out: #7c5cff;
   --bubble-out-text: #ffffff;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .dark {
-  --bg: #22262d;
-  --bg-elevated: #262b33;
-  --surface: #22262d;
-  --surface-2: #1d2127;
+  --bg: #161521;
+  --bg-elevated: #1c1a29;
+  --surface: #161521;
+  --surface-2: #201e2e;
+  --surface-3: #282539;
 
-  --text: #e7ebf1;
-  --text-muted: #9aa4b2;
-  --text-faint: #6b7482;
+  --text: #efedf7;
+  --text-muted: #a5a1bd;
+  --text-faint: #8a86a0;
 
-  --primary: #22c55e;
-  --primary-hover: #34d16d;
-  --primary-contrast: #06281a;
-  --primary-soft: rgba(34, 197, 94, 0.16);
+  --primary: #8b6cff;
+  --primary-hover: #9a7dff;
+  --primary-active: #7a58f0;
+  --primary-contrast: #ffffff;
+  --primary-soft: rgba(139, 108, 255, 0.18);
+  --primary-ring: rgba(139, 108, 255, 0.5);
 
-  --danger: #f2555a;
-  --danger-soft: rgba(242, 85, 90, 0.16);
-  --warning: #f5a524;
-  --success: #22c55e;
-  --online: #22c55e;
+  --accent: #ff7f9c;
+  --accent-soft: rgba(255, 127, 156, 0.18);
 
-  --border: rgba(231, 235, 241, 0.08);
-  --border-strong: rgba(231, 235, 241, 0.16);
+  --danger: #ff5a72;
+  --danger-soft: rgba(255, 90, 114, 0.16);
+  --warning: #f5b043;
+  --warning-soft: rgba(245, 176, 67, 0.16);
+  --success: #22c98d;
+  --online: #24d99a;
 
-  --shadow-light: #2b313a;
-  --shadow-dark: #171a1f;
+  --border: rgba(239, 237, 247, 0.09);
+  --border-strong: rgba(239, 237, 247, 0.18);
 
-  --ring: rgba(34, 197, 94, 0.5);
+  --shadow-light: #232134;
+  --shadow-dark: #0b0a12;
 
-  --bubble-in: #2b313a;
-  --bubble-out: #12864e;
+  --texture-dot: rgba(239, 237, 247, 0.045);
+
+  --ring: rgba(139, 108, 255, 0.5);
+
+  --bubble-in: #262433;
+  --bubble-in-text: #efedf7;
+  --bubble-out: #7c5cff;
   --bubble-out-text: #ffffff;
 }
 
@@ -93,6 +126,7 @@
   --color-bg-elevated: var(--bg-elevated);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
 
   --color-text: var(--text);
   --color-muted: var(--text-muted);
@@ -100,12 +134,16 @@
 
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-active);
   --color-primary-contrast: var(--primary-contrast);
   --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
 
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
   --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
   --color-success: var(--success);
   --color-online: var(--online);
 
@@ -113,12 +151,65 @@
   --color-line-strong: var(--border-strong);
 
   --color-bubble-in: var(--bubble-in);
+  --color-bubble-in-text: var(--bubble-in-text);
   --color-bubble-out: var(--bubble-out);
   --color-bubble-out-text: var(--bubble-out-text);
 
-  --radius-neu: 1.25rem;
+  --radius-neu: 1rem;
+  --radius-app: 0.875rem;
 
-  --radius-app: 1rem;
+  --animate-rise: rise 0.32s var(--ease-out) both;
+  --animate-fade: fade 0.25s ease both;
+  --animate-pop: pop 0.3s var(--ease-spring) both;
+}
+
+/* Keyframes ----------------------------------------------------------------- */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(7px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pop {
+  0% {
+    opacity: 0;
+    transform: translateY(9px) scale(0.955);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes typing-bounce {
+  0%,
+  70%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+  35% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
 }
 
 /* Base --------------------------------------------------------------------- */
@@ -142,13 +233,19 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+::selection {
+  background: var(--primary-soft);
+  color: var(--text);
+}
+
 /* Theme transition */
 html.theme-ready,
 html.theme-ready body,
 html.theme-ready .theme-transition {
   transition:
     background-color 220ms ease,
-    color 220ms ease,
+    border-color 220ms ease,
+    color 180ms ease,
     box-shadow 220ms ease;
 }
 
@@ -157,6 +254,13 @@ html.theme-ready .theme-transition {
   html.theme-ready body,
   html.theme-ready .theme-transition {
     transition: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
   }
 }
 
@@ -173,18 +277,20 @@ html.theme-ready .theme-transition {
 .scroll-soft::-webkit-scrollbar-thumb {
   background-color: var(--border-strong);
   border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
 .scroll-soft::-webkit-scrollbar-track {
   background: transparent;
 }
 
-/* Neumorphic utilities ---------------------------------------------------- */
+/* Neumorphic surfaces ------------------------------------------------------ */
 
 @utility neu-raised {
   background-color: var(--surface);
   box-shadow:
-    6px 6px 12px var(--shadow-dark),
-    -6px -6px 12px var(--shadow-light);
+    6px 6px 14px var(--shadow-dark),
+    -6px -6px 14px var(--shadow-light);
 }
 
 @utility neu-raised-sm {
@@ -197,15 +303,15 @@ html.theme-ready .theme-transition {
 @utility neu-raised-lg {
   background-color: var(--surface);
   box-shadow:
-    10px 10px 22px var(--shadow-dark),
-    -10px -10px 22px var(--shadow-light);
+    10px 10px 24px var(--shadow-dark),
+    -10px -10px 24px var(--shadow-light);
 }
 
 @utility neu-inset {
   background-color: var(--surface);
   box-shadow:
-    inset 4px 4px 8px var(--shadow-dark),
-    inset -4px -4px 8px var(--shadow-light);
+    inset 4px 4px 9px var(--shadow-dark),
+    inset -4px -4px 9px var(--shadow-light);
 }
 
 @utility neu-inset-sm {
@@ -215,29 +321,83 @@ html.theme-ready .theme-transition {
     inset -2px -2px 5px var(--shadow-light);
 }
 
-/* Pressable: raised -> inset on active */
+/* Flat panel: gently sunken surface with a hairline for definition. */
+@utility neu-flat {
+  background-color: var(--surface-2);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+/* Pressable: raised -> inset on active. */
 @utility neu-press {
   background-color: var(--surface);
   box-shadow:
-    5px 5px 10px var(--shadow-dark),
-    -5px -5px 10px var(--shadow-light);
+    5px 5px 11px var(--shadow-dark),
+    -5px -5px 11px var(--shadow-light);
   transition:
-    box-shadow 140ms ease,
-    transform 140ms ease;
-}
-.neu-press:active {
-  box-shadow:
-    inset 3px 3px 6px var(--shadow-dark),
-    inset -3px -3px 6px var(--shadow-light);
-  transform: translateY(1px);
+    box-shadow 150ms var(--ease-out),
+    transform 150ms var(--ease-out),
+    color 150ms ease;
+
+  &:hover {
+    box-shadow:
+      6px 6px 13px var(--shadow-dark),
+      -6px -6px 13px var(--shadow-light);
+  }
+
+  &:active {
+    box-shadow:
+      inset 3px 3px 7px var(--shadow-dark),
+      inset -3px -3px 7px var(--shadow-light);
+    transform: translateY(1px) scale(0.992);
+  }
 }
 
-/* Soft divider line that works on neumorphic surfaces */
+/* Soft divider line that works on neumorphic surfaces. */
 @utility neu-divider {
   border-color: transparent;
   box-shadow:
     0 1px 0 var(--shadow-light),
     0 -1px 0 var(--shadow-dark);
+}
+
+/* Brand ------------------------------------------------------------------- */
+
+@utility brand-gradient {
+  background-image: linear-gradient(
+    135deg,
+    var(--brand-1) 0%,
+    var(--brand-2) 56%,
+    var(--brand-3) 128%
+  );
+}
+
+@utility brand-gradient-soft {
+  background-image: linear-gradient(135deg, var(--primary-soft), var(--accent-soft));
+}
+
+@utility text-gradient {
+  background-image: linear-gradient(115deg, var(--brand-1), var(--brand-2) 52%, var(--brand-3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* A soft brand glow, used sparingly on primary actions. */
+@utility glow-brand {
+  box-shadow:
+    0 10px 24px -10px var(--primary),
+    0 3px 8px -4px var(--shadow-dark);
+}
+
+/* Decoration -------------------------------------------------------------- */
+
+@utility app-texture {
+  background-image: radial-gradient(circle at 1px 1px, var(--texture-dot) 1.2px, transparent 0);
+  background-size: 22px 22px;
+}
+
+@utility hairline {
+  box-shadow: inset 0 0 0 1px var(--border);
 }
 
 /* Focus visibility -------------------------------------------------------- */

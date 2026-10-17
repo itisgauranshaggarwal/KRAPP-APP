@@ -17,14 +17,14 @@ export function initials(name: string): string {
 /** Deterministic soft color for a default avatar, derived from a string. */
 export function avatarColor(seed: string): string {
   const palette = [
-    '#12a15c',
-    '#0ea5e9',
-    '#8b5cf6',
-    '#f59e0b',
-    '#ec4899',
-    '#14b8a6',
-    '#ef4444',
-    '#6366f1',
+    '#7c5cff',
+    '#a95cff',
+    '#ff5c7f',
+    '#ff8a5c',
+    '#12b5b0',
+    '#3b9dff',
+    '#f0b429',
+    '#e05fa8',
   ]
   let hash = 0
   for (let i = 0; i < seed.length; i += 1) {

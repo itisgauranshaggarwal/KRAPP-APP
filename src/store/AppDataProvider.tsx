@@ -33,7 +33,9 @@ interface AppData {
   sendMessage: (conversationId: string, content: string) => void
   markConversationRead: (conversationId: string) => void
   deleteConversation: (conversationId: string) => void
-  updateProfile: (patch: Partial<Pick<User, 'displayName' | 'username' | 'avatarUrl' | 'bio'>>) => void
+  updateProfile: (
+    patch: Partial<Pick<User, 'displayName' | 'username' | 'email' | 'avatarUrl' | 'bio'>>,
+  ) => void
   isAvailableUsername: (username: string) => boolean
 }
 

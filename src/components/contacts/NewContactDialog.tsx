@@ -141,7 +141,7 @@ export function NewContactDialog({ trigger }: NewContactDialogProps) {
 
         {step === 'confirm' && selected ? (
           <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-3 rounded-2xl bg-surface-2/60 p-3">
+            <div className="neu-flat flex items-center gap-3 rounded-xl p-3">
               <Avatar
                 name={selected.displayName}
                 username={selected.username}
@@ -165,9 +165,9 @@ export function NewContactDialog({ trigger }: NewContactDialogProps) {
                 onChange={(e) => setIntro(e.target.value)}
                 placeholder="Hi! We met at…"
                 className={cn(
-                  'neu-inset w-full resize-none rounded-2xl px-3.5 py-3 text-sm text-text',
-                  'placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
-                  'scroll-soft',
+                  'neu-inset w-full resize-none rounded-xl px-3.5 py-3 text-sm text-text',
+                  'placeholder:text-faint focus-visible:outline-none scroll-soft',
+                  'transition-[outline-color] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--ring)]',
                 )}
               />
               <p className="mt-1.5 text-xs text-faint">

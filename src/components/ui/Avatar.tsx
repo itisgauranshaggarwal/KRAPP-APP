@@ -27,7 +27,7 @@ export interface AvatarProps {
   username?: string
   src?: string | null
   size?: Size
-  /** `icon` = WhatsApp-style silhouette (default), `initials` = colored letters. */
+  /** `icon` = silhouette fallback (default), `initials` = colored letters. */
   fallback?: Fallback
   online?: boolean
   className?: string
@@ -50,7 +50,7 @@ export function Avatar({
       <span
         className={cn(
           'neu-inset-sm inline-flex items-center justify-center overflow-hidden rounded-full',
-          'font-semibold text-muted',
+          'font-semibold text-primary/55',
           sizes[size],
         )}
       >
@@ -65,7 +65,7 @@ export function Avatar({
         ) : fallback === 'initials' ? (
           <span aria-hidden>{toInitials(username || name)}</span>
         ) : (
-          <UserRound className={cn('text-faint', iconSizes[size])} aria-hidden />
+          <UserRound className={cn('text-primary/50', iconSizes[size])} aria-hidden />
         )}
       </span>
 

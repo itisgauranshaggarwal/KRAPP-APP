@@ -21,17 +21,19 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center gap-3 px-6 py-12 text-center',
+        'flex animate-fade flex-col items-center justify-center gap-4 px-6 py-14 text-center',
         className,
       )}
     >
-      <span className="neu-inset flex size-16 items-center justify-center rounded-full">
-        <Icon className="size-7 text-faint" aria-hidden />
+      <span className="brand-gradient-soft hairline relative flex size-16 items-center justify-center rounded-2xl">
+        <Icon className="size-7 text-primary" aria-hidden />
       </span>
       <div>
-        <p className="font-medium text-text">{title}</p>
+        <p className="font-semibold tracking-[-0.01em] text-text">{title}</p>
         {description ? (
-          <p className="mx-auto mt-1 max-w-xs text-sm text-muted">{description}</p>
+          <p className="mx-auto mt-1.5 max-w-xs text-sm leading-relaxed text-muted">
+            {description}
+          </p>
         ) : null}
       </div>
       {action}

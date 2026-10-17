@@ -24,7 +24,7 @@
 - Respect free tier storage: keep only last 5 messages per chat; delete older messages daily. Delete media files regardless of the 5-message rule.
 - Full responsive behavior (mobile and desktop treated equally).
 - Light/dark mode with neumorphic style.
-- Account management: editable profile fields, email immutable warning, delete account option.
+- Account management: editable profile fields (display name, username, email, avatar, bio), delete account option.
 - Safety notice for users.
 
 ## 3. User Roles
@@ -42,7 +42,7 @@
 Required fields at signup:
 - **Display Name** (shown to others)
 - **Username** (chosen by user; must be unique; used for finding accounts)
-- **Email** (for UUID/account identity purposes only; immutable after account creation)
+- **Email** (for UUID/account identity purposes only; editable later in Profile, never shown to other users)
 - **Password** (minimum 5 characters)
 
 During signup, show a short warning: *"Email cannot be changed later."*
@@ -213,7 +213,7 @@ Account deletion: **Delete Account** option available in profile/settings.
 ## 10. Success Criteria (MVP "Usable")
 
 MVP is considered usable when:
-1. User can signup/signin with username+password (email immutable warning shown; profile editable)
+1. User can signup/signin with username+password (profile editable, including email)
 2. User can search username and send friend invite (with single intro msg)
 3. Recipient can accept/reject invite
 4. After acceptance, 1:1 realtime text messaging works (send/receive)

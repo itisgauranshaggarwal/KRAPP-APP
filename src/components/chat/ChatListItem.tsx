@@ -1,7 +1,6 @@
 import { Check, CheckCheck } from 'lucide-react'
 
 import { Avatar } from '@/components/ui/Avatar'
-import { CountBadge } from '@/components/ui/Badge'
 import { cn } from '@/lib/utils'
 import { formatListTime } from '@/lib/format'
 import type { Conversation, MessageStatus } from '@/types'
@@ -14,10 +13,10 @@ export interface ChatListItemProps {
 }
 
 function PreviewTicks({ status }: { status: MessageStatus }) {
-  if (status === 'seen') return <CheckCheck className="size-3.5 text-primary" aria-hidden />
-  if (status === 'delivered') return <CheckCheck className="size-3.5" aria-hidden />
-  if (status === 'sent') return <Check className="size-3.5" aria-hidden />
-  return <Check className="size-3.5 opacity-60" aria-hidden />
+  if (status === 'seen') return <CheckCheck className="size-4 shrink-0 text-primary" aria-hidden />
+  if (status === 'delivered') return <CheckCheck className="size-4 shrink-0" aria-hidden />
+  if (status === 'sent') return <Check className="size-4 shrink-0" aria-hidden />
+  return <Check className="size-4 shrink-0 opacity-60" aria-hidden />
 }
 
 export function ChatListItem({
@@ -28,14 +27,17 @@ export function ChatListItem({
 }: ChatListItemProps) {
   const { user, lastMessage, unreadCount } = conversation
   const mine = lastMessage?.senderId === currentUserId
+  const unread = unreadCount > 0
 
   return (
     <button
       type="button"
       onClick={onClick}
+      aria-current={active ? 'true' : undefined}
       className={cn(
-        'flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left transition-colors duration-150',
-        active ? 'neu-inset' : 'hover:bg-surface-2',
+        'group flex w-full items-center gap-3 rounded-xl px-2.5 py-2.5 text-left',
+        'transition-[background-color,box-shadow] duration-150',
+        active ? 'neu-inset' : 'hover:bg-surface-2 active:bg-surface-3',
       )}
     >
       <Avatar
@@ -48,18 +50,34 @@ export function ChatListItem({
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
-          <span className="truncate font-medium text-text">{user.displayName}</span>
-          <span className={cn('shrink-0 text-[11px]', unreadCount > 0 ? 'text-primary' : 'text-faint')}>
+          <span className={cn('truncate text-text', unread ? 'font-semibold' : 'font-medium')}>
+            {user.displayName}
+          </span>
+          <span
+            className={cn(
+              'shrink-0 text-[11px] tabular-nums',
+              unread ? 'font-semibold text-primary' : 'text-faint',
+            )}
+          >
             {lastMessage ? formatListTime(lastMessage.createdAt) : ''}
           </span>
         </div>
 
         <div className="mt-0.5 flex items-center justify-between gap-2">
-          <span className="flex min-w-0 items-center gap-1 text-sm text-muted">
+          <span
+            className={cn(
+              'flex min-w-0 items-center gap-1 text-sm',
+              unread ? 'font-medium text-text' : 'text-muted',
+            )}
+          >
             {mine ? <PreviewTicks status={lastMessage?.status ?? 'sent'} /> : null}
             <span className="truncate">{lastMessage?.content ?? 'Say hi 👋'}</span>
           </span>
-          <CountBadge count={unreadCount} />
+          {unread ? (
+            <span className="inline-flex min-w-5 shrink-0 items-center justify-center rounded-full brand-gradient px-1.5 py-0.5 text-[11px] font-semibold text-primary-contrast shadow-[0_4px_10px_-4px_var(--primary)]">
+              {unreadCount > 99 ? '99+' : unreadCount}
+            </span>
+          ) : null}
         </div>
       </div>
     </button>

@@ -11,10 +11,11 @@ function ago(ms: number): string {
 /** The signed-in user (mock). */
 export const currentUser: User = {
   id: 'me',
-  username: 'krapp_dev',
-  displayName: 'You',
-  email: 'you@krapp.app',
+  username: 'alex.rivera',
+  displayName: 'Alex Rivera',
+  email: 'alex@krapp.app',
   avatarUrl: null,
+  bio: 'Just here to chat 🎧 · gaming & music',
   online: true,
   lastSeenAt: new Date().toISOString(),
 }

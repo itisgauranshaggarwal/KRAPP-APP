@@ -16,10 +16,7 @@ export interface TabsProps {
 /** Segmented neumorphic control (inset track, active pill raised). */
 export function Tabs({ items, value, onChange, className }: TabsProps) {
   return (
-    <div
-      role="tablist"
-      className={cn('neu-inset flex gap-1 rounded-2xl p-1', className)}
-    >
+    <div role="tablist" className={cn('neu-inset flex gap-1 rounded-xl p-1', className)}>
       {items.map((item) => {
         const active = item.value === value
         return (
@@ -30,11 +27,9 @@ export function Tabs({ items, value, onChange, className }: TabsProps) {
             aria-selected={active}
             onClick={() => onChange(item.value)}
             className={cn(
-              'flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium',
+              'flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold',
               'transition-[box-shadow,color] duration-150',
-              active
-                ? 'neu-raised-sm text-primary'
-                : 'text-muted hover:text-text',
+              active ? 'neu-raised-sm text-primary' : 'text-muted hover:text-text',
             )}
           >
             {item.label}

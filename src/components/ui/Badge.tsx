@@ -8,7 +8,7 @@ const tones: Record<Tone, string> = {
   neutral: 'bg-surface-2 text-muted',
   primary: 'bg-primary-soft text-primary',
   danger: 'bg-danger-soft text-danger',
-  warning: 'bg-warning/15 text-warning',
+  warning: 'bg-warning-soft text-warning',
   success: 'bg-primary-soft text-success',
 }
 
@@ -22,7 +22,7 @@ export function Badge({ children, tone = 'neutral', className }: BadgeProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium',
+        'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold',
         tones[tone],
         className,
       )}
@@ -37,14 +37,14 @@ export interface CountBadgeProps {
   className?: string
 }
 
-/** Unread counter bubble, WhatsApp-style. */
+/** Unread counter bubble. */
 export function CountBadge({ count, className }: CountBadgeProps) {
   if (count <= 0) return null
   return (
     <span
       className={cn(
-        'inline-flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 py-0.5',
-        'text-[11px] font-semibold text-primary-contrast',
+        'inline-flex min-w-5 items-center justify-center rounded-full brand-gradient px-1.5 py-0.5',
+        'text-[11px] font-semibold text-primary-contrast shadow-[0_4px_10px_-4px_var(--primary)]',
         className,
       )}
     >

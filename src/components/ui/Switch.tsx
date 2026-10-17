@@ -35,7 +35,7 @@ export function Switch({ checked, onChange, label, disabled, className }: Switch
           className={cn(
             'inline-block size-5 rounded-full transition-transform duration-200',
             checked
-              ? 'translate-x-5 bg-primary'
+              ? 'translate-x-5 brand-gradient'
               : 'translate-x-0 bg-surface shadow-[2px_2px_4px_var(--shadow-dark),-1px_-1px_3px_var(--shadow-light)]',
           )}
         />

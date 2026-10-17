@@ -66,7 +66,7 @@ export function Modal({
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
       <div
-        className="absolute inset-0 bg-black/45 backdrop-blur-[2px]"
+        className="absolute inset-0 animate-[fade_0.2s_ease_both] bg-black/50 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden
       />
@@ -77,19 +77,20 @@ export function Modal({
         aria-modal="true"
         aria-label={title}
         className={cn(
-          'neu-raised relative z-10 w-full rounded-t-3xl p-5 sm:rounded-3xl',
-          maxWidths[size],
+          'neu-raised relative z-10 w-full animate-[pop_0.32s_var(--ease-spring)_both] rounded-t-2xl p-5 sm:rounded-2xl',
           'max-h-[90vh] overflow-y-auto scroll-soft',
+          'sm:p-6',
+          maxWidths[size],
           className,
         )}
       >
         {(title || description) && (
           <div className="mb-4 flex items-start justify-between gap-4">
             <div>
-              {title ? <h2 className="text-lg font-semibold text-text">{title}</h2> : null}
-              {description ? (
-                <p className="mt-1 text-sm text-muted">{description}</p>
+              {title ? (
+                <h2 className="text-lg font-semibold tracking-[-0.01em] text-text">{title}</h2>
               ) : null}
+              {description ? <p className="mt-1 text-sm text-muted">{description}</p> : null}
             </div>
             <IconButton label="Close" size="sm" variant="ghost" onClick={onClose}>
               <X className="size-4.5" />

@@ -9,7 +9,7 @@ export interface AppLogoProps {
 const marks = {
   sm: 'size-9 rounded-xl text-lg',
   md: 'size-11 rounded-2xl text-xl',
-  lg: 'size-16 rounded-3xl text-3xl',
+  lg: 'size-16 rounded-[1.35rem] text-3xl',
 } as const
 
 const words = {
@@ -23,15 +23,18 @@ export function AppLogo({ size = 'md', withWordmark = false, className }: AppLog
     <span className={cn('inline-flex items-center gap-3', className)}>
       <span
         className={cn(
-          'neu-raised inline-flex items-center justify-center font-bold text-primary',
+          'brand-gradient glow-brand relative inline-flex items-center justify-center font-bold text-white',
+          'after:absolute after:inset-0 after:rounded-[inherit] after:bg-[linear-gradient(to_bottom,rgba(255,255,255,0.28),transparent)]',
           marks[size],
         )}
         aria-hidden
       >
-        K
+        <span className="relative drop-shadow-[0_1px_1px_rgba(0,0,0,0.25)]">K</span>
       </span>
       {withWordmark ? (
-        <span className={cn('font-semibold tracking-tight text-text', words[size])}>
+        <span
+          className={cn('font-bold tracking-tight text-text', words[size])}
+        >
           KRAPP
         </span>
       ) : null}

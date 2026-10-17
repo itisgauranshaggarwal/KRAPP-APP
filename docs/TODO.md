@@ -13,7 +13,7 @@ This is the master todo list. Work in the specified order: UI -> UX -> Realtime 
 - [x] 1.6 Lint setup (oxlint from Vite scaffold) — Prettier deferred to Phase 2/5
 - [x] 1.7 Design system: color tokens (light/dark), neumorphic shadow utilities, radius, typography
 - [x] 1.8 Routing structure (react-router-dom v7): public auth routes + app shell routes
-- [x] 1.9 Auth UI: Signup screen (display name, username, email, password; email immutable warning)
+- [x] 1.9 Auth UI: Signup screen (display name, username, email, password)
 - [x] 1.10 Auth UI: Signin screen (username + password only)
 - [x] 1.11 Desktop app shell (icon rail + list + chat area)
 - [x] 1.12 Mobile layout (bottom nav + list/chat navigation with full-screen chat)
@@ -21,7 +21,7 @@ This is the master todo list. Work in the specified order: UI -> UX -> Realtime 
 - [x] 1.14 New Contact dialog: search by username, results, send invite with single intro message
 - [x] 1.15 Chat UI: message list, bubbles, day separators, timestamps, status ticks, typing bubble
 - [x] 1.16 Chat input (text only; Enter to send, auto-grow textarea)
-- [x] 1.17 Profile UI (view/edit display name + username + avatar, email read-only note, theme mode, delete account, about)
+- [x] 1.17 Profile UI (view/edit display name + username + email + avatar + bio, theme mode, delete account, about)
 - [x] 1.18 Light/Dark/system mode toggle (no-flash inline script + ThemeProvider)
 - [x] 1.19 Default avatar component (WhatsApp-style silhouette, optional initials mode, presence dot)
 - [~] 1.20 Responsive polish — first pass done (lg breakpoints); needs device testing in Phase 2
@@ -36,7 +36,7 @@ This is the master todo list. Work in the specified order: UI -> UX -> Realtime 
 **Goal:** Improve UX, validation, empty/loading states, route guards, accessibility basics.
 
 - [ ] 2.1 Form validation for signup/signin (min 5 char password, required fields, username uniqueness logic client-side for UX)
-- [ ] 2.2 Email immutable warning clearly shown on signup and in profile view
+- [ ] 2.2 Profile: inline save feedback + field validation (email now editable)
 - [ ] 2.3 Username search validation (no spaces, case handling? document behavior)
 - [ ] 2.4 Invite flow UX: search -> result -> confirm send (with optional intro msg)
 - [ ] 2.5 Accept/Reject flow with feedback
@@ -85,7 +85,7 @@ This is the master todo list. Work in the specified order: UI -> UX -> Realtime 
 - [ ] 3.3.6 Route guards based on auth state
 - [ ] 3.3.7 Edit profile: update display_name, username (check unique), avatar_url
 - [ ] 3.3.8 Delete account: delete profile + auth user (handle cascades)
-- [ ] 3.3.9 Store email immutable; show warning
+- [ ] 3.3.9 Allow email updates (with validation + uniqueness check)
 
 ### 3.4 Contacts System
 - [ ] 3.4.1 Search user by username (exact or startswith? document; keep simple)
