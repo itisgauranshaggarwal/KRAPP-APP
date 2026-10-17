@@ -1,5 +1,5 @@
 import { Search, UserPlus, UserRound } from 'lucide-react'
-import { useId, useState, type FormEvent } from 'react'
+import { useId, useRef, useState, type FormEvent } from 'react'
 
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
@@ -7,34 +7,40 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { IconButton } from '@/components/ui/IconButton'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
+import { SkeletonRows } from '@/components/ui/Skeleton'
+import { pushToast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 import { useAppData } from '@/store/AppDataProvider'
 import type { User } from '@/types'
 
 type Step = 'search' | 'confirm' | 'done'
 
-export interface NewContactDialogProps {
-  /** Optional custom trigger; defaults to an accent-tinted icon button. */
-  trigger?: React.ReactNode
-}
+const USERNAME_PATTERN = /^[a-z0-9._]*$/
 
-export function NewContactDialog({ trigger }: NewContactDialogProps) {
+export function NewContactDialog() {
   const { searchUsers, sendInvite, outgoingRequests } = useAppData()
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
-  const [submitted, setSubmitted] = useState(false)
+  const [results, setResults] = useState<User[] | null>(null)
+  const [searching, setSearching] = useState(false)
+  const [queryError, setQueryError] = useState<string | null>(null)
   const [selected, setSelected] = useState<User | null>(null)
   const [intro, setIntro] = useState('')
+  const [sending, setSending] = useState(false)
   const [step, setStep] = useState<Step>('search')
   const introId = useId()
-
-  const results = submitted ? searchUsers(query) : []
+  // Guards against a slow earlier search overwriting a newer one.
+  const searchSeq = useRef(0)
 
   function reset() {
+    searchSeq.current += 1
     setQuery('')
-    setSubmitted(false)
+    setResults(null)
+    setSearching(false)
+    setQueryError(null)
     setSelected(null)
     setIntro('')
+    setSending(false)
     setStep('search')
   }
 
@@ -44,38 +50,61 @@ export function NewContactDialog({ trigger }: NewContactDialogProps) {
     window.setTimeout(reset, 200)
   }
 
-  function handleSearch(event: FormEvent) {
-    event.preventDefault()
-    setSubmitted(true)
+  async function handleSearch(event?: FormEvent) {
+    event?.preventDefault()
+    const clean = query.trim().replace(/^@/, '').toLowerCase()
+
+    if (!clean) {
+      setQueryError('Enter a username to search')
+      return
+    }
+    if (!USERNAME_PATTERN.test(clean)) {
+      setQueryError('Usernames use lowercase letters, numbers, dots or underscores')
+      return
+    }
+
+    setQueryError(null)
+    setSearching(true)
+    setResults(null)
+    const seq = ++searchSeq.current
+    const found = await searchUsers(clean)
+    if (seq !== searchSeq.current) return
+    setResults(found)
+    setSearching(false)
   }
 
-  function handleSend() {
+  async function handleSend() {
     if (!selected) return
-    sendInvite(selected, intro)
-    setStep('done')
+    setSending(true)
+    try {
+      await sendInvite(selected, intro)
+      setStep('done')
+      pushToast({
+        title: 'Request sent',
+        description: `${selected.displayName} will see your invite.`,
+        tone: 'success',
+      })
+    } catch {
+      pushToast({
+        title: 'Could not send request',
+        description: 'Check your connection and try again.',
+        tone: 'danger',
+      })
+    } finally {
+      setSending(false)
+    }
   }
 
   return (
     <>
-      {trigger ? (
-        <button
-          type="button"
-          className="contents"
-          onClick={() => setOpen(true)}
-          aria-label="New contact"
-        >
-          {trigger}
-        </button>
-      ) : (
-        <IconButton
-          label="New contact"
-          variant="ghost"
-          className="hover:bg-primary-soft hover:text-primary"
-          onClick={() => setOpen(true)}
-        >
-          <UserPlus className="size-5" />
-        </IconButton>
-      )}
+      <IconButton
+        label="New contact"
+        variant="ghost"
+        className="hover:bg-primary-soft hover:text-primary"
+        onClick={() => setOpen(true)}
+      >
+        <UserPlus className="size-5" />
+      </IconButton>
 
       <Modal
         open={open}
@@ -97,19 +126,28 @@ export function NewContactDialog({ trigger }: NewContactDialogProps) {
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value)
-                  setSubmitted(false)
+                  setResults(null)
+                  setQueryError(null)
                 }}
                 placeholder="username"
                 aria-label="Search by username"
                 leadingIcon={<Search className="size-4.5" />}
+                error={queryError ?? undefined}
               />
-              <Button type="submit" variant="primary">
+              <Button
+                type="submit"
+                variant="primary"
+                loading={searching}
+                disabled={!query.trim()}
+              >
                 Search
               </Button>
             </form>
 
             <div className="mt-4">
-              {!submitted ? (
+              {searching ? (
+                <SkeletonRows rows={3} />
+              ) : results === null ? (
                 <p className="px-1 py-6 text-center text-sm text-faint">
                   Type a username and press enter to search.
                 </p>
@@ -188,10 +226,10 @@ export function NewContactDialog({ trigger }: NewContactDialogProps) {
             </div>
 
             <div className="flex justify-between gap-2">
-              <Button variant="ghost" onClick={() => setStep('search')}>
+              <Button variant="ghost" onClick={() => setStep('search')} disabled={sending}>
                 Back
               </Button>
-              <Button variant="primary" onClick={handleSend}>
+              <Button variant="primary" onClick={handleSend} loading={sending}>
                 Send request
               </Button>
             </div>

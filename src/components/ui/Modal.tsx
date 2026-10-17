@@ -1,5 +1,5 @@
 import { X } from 'lucide-react'
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useId, useRef, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 
 import { IconButton } from '@/components/ui/IconButton'
@@ -22,6 +22,9 @@ const maxWidths = {
   lg: 'max-w-lg',
 } as const
 
+const FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+
 export function Modal({
   open,
   onClose,
@@ -33,31 +36,65 @@ export function Modal({
   className,
 }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null)
+  const titleId = useId()
+  const descriptionId = useId()
 
-  // Close on Escape + lock scroll while open.
+  // Escape to close, Tab trapped inside the dialog, focus restored on close.
   useEffect(() => {
     if (!open) return
 
+    const previouslyFocused = document.activeElement as HTMLElement | null
+
+    const focusable = () =>
+      Array.from(panelRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? []).filter(
+        (element) => element.offsetParent !== null || element === panelRef.current,
+      )
+
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose()
+      if (event.key === 'Escape') {
+        event.stopPropagation()
+        onClose()
+        return
+      }
+      if (event.key !== 'Tab') return
+
+      const items = focusable()
+      if (items.length === 0) {
+        event.preventDefault()
+        return
+      }
+
+      const first = items[0]!
+      const last = items[items.length - 1]!
+      const active = document.activeElement
+      const inside = panelRef.current?.contains(active as Node) ?? false
+
+      if (event.shiftKey && (active === first || !inside)) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && (active === last || !inside)) {
+        event.preventDefault()
+        first.focus()
+      }
     }
-    document.addEventListener('keydown', onKeyDown)
+
+    document.addEventListener('keydown', onKeyDown, true)
 
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
 
-    // Move focus into the dialog.
-    const timeout = window.setTimeout(() => {
-      const focusable = panelRef.current?.querySelector<HTMLElement>(
-        'input, textarea, button, [href], [tabindex]:not([tabindex="-1"])',
-      )
-      focusable?.focus()
+    // Move focus into the dialog once the panel has mounted.
+    const focusTimer = window.setTimeout(() => {
+      const [firstFocusable] = focusable()
+      if (firstFocusable) firstFocusable.focus()
+      else panelRef.current?.focus()
     }, 20)
 
     return () => {
-      document.removeEventListener('keydown', onKeyDown)
+      document.removeEventListener('keydown', onKeyDown, true)
       document.body.style.overflow = previousOverflow
-      window.clearTimeout(timeout)
+      window.clearTimeout(focusTimer)
+      previouslyFocused?.focus?.()
     }
   }, [open, onClose])
 
@@ -65,19 +102,17 @@ export function Modal({
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
-      <div
-        className="absolute inset-0 animate-fade bg-black/45"
-        onClick={onClose}
-        aria-hidden
-      />
+      <div className="absolute inset-0 animate-fade bg-black/45" onClick={onClose} aria-hidden />
 
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-label={title}
+        tabIndex={-1}
+        aria-labelledby={title ? titleId : undefined}
+        aria-describedby={description ? descriptionId : undefined}
         className={cn(
-          'relative z-10 w-full animate-[rise_0.18s_var(--ease-out)_both]',
+          'relative z-10 w-full animate-[rise_0.18s_var(--ease-out)_both] outline-none',
           'rounded-t-xl border border-line bg-surface shadow-[var(--shadow-pop)]',
           'max-h-[90vh] overflow-y-auto scroll-soft',
           'p-5 sm:rounded-xl sm:p-6',
@@ -89,9 +124,18 @@ export function Modal({
           <div className="mb-4 flex items-start justify-between gap-4">
             <div>
               {title ? (
-                <h2 className="text-base font-semibold tracking-[-0.01em] text-text">{title}</h2>
+                <h2
+                  id={titleId}
+                  className="text-base font-semibold tracking-[-0.01em] text-text"
+                >
+                  {title}
+                </h2>
               ) : null}
-              {description ? <p className="mt-1 text-sm text-muted">{description}</p> : null}
+              {description ? (
+                <p id={descriptionId} className="mt-1 text-sm text-muted">
+                  {description}
+                </p>
+              ) : null}
             </div>
             <IconButton label="Close" size="sm" variant="ghost" onClick={onClose}>
               <X className="size-4" />

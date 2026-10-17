@@ -3,6 +3,7 @@ import {
   Camera,
   Check,
   Info,
+  LogOut,
   Mail,
   Monitor,
   Moon,
@@ -10,6 +11,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import { useRef, useState, type ChangeEvent, type ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { PageHeader } from '@/components/layout/PageHeader'
 import { SafetyNotice } from '@/components/shared/SafetyNotice'
@@ -17,8 +19,10 @@ import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
-import { cn } from '@/lib/utils'
+import { useSession } from '@/lib/session'
 import { useTheme } from '@/lib/theme'
+import { pushToast } from '@/lib/toast'
+import { cn } from '@/lib/utils'
 import { useAppData } from '@/store/AppDataProvider'
 import type { ThemeMode } from '@/types'
 
@@ -32,8 +36,10 @@ type FieldErrors = {
 }
 
 export function ProfilePage() {
+  const navigate = useNavigate()
   const { currentUser, updateProfile, isAvailableUsername } = useAppData()
   const { mode, setMode } = useTheme()
+  const { signOut, deleteAccount } = useSession()
   const fileRef = useRef<HTMLInputElement>(null)
 
   const [displayName, setDisplayName] = useState(currentUser.displayName)
@@ -41,17 +47,26 @@ export function ProfilePage() {
   const [email, setEmail] = useState(currentUser.email ?? '')
   const [bio, setBio] = useState(currentUser.bio ?? '')
   const [errors, setErrors] = useState<FieldErrors>({})
-  const [saved, setSaved] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [signingOut, setSigningOut] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
+
+  const isDirty =
+    displayName.trim() !== currentUser.displayName ||
+    username.trim().toLowerCase() !== currentUser.username ||
+    email.trim() !== (currentUser.email ?? '') ||
+    bio.trim() !== (currentUser.bio ?? '')
 
   function pickAvatar(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
     if (!file) return
     const url = URL.createObjectURL(file)
-    updateProfile({ avatarUrl: url })
+    void updateProfile({ avatarUrl: url })
+    pushToast({ title: 'Profile picture updated', tone: 'success' })
   }
 
-  function save() {
+  async function save() {
     const next: FieldErrors = {}
     const cleanUsername = username.trim().toLowerCase()
     const cleanEmail = email.trim()
@@ -74,14 +89,30 @@ export function ProfilePage() {
     setErrors(next)
     if (Object.keys(next).length > 0) return
 
-    updateProfile({
+    setSaving(true)
+    await updateProfile({
       displayName: displayName.trim(),
       username: cleanUsername,
       email: cleanEmail,
       bio: bio.trim(),
     })
-    setSaved(true)
-    window.setTimeout(() => setSaved(false), 1800)
+    setSaving(false)
+    pushToast({ title: 'Profile saved', tone: 'success' })
+  }
+
+  async function handleSignOut() {
+    setSigningOut(true)
+    await signOut()
+    pushToast({ title: 'Signed out', description: 'See you soon.' })
+    navigate('/login', { replace: true })
+  }
+
+  async function handleDeleteAccount() {
+    setDeleting(true)
+    await deleteAccount()
+    setConfirmDelete(false)
+    pushToast({ title: 'Account deleted', description: 'All of your data was removed.' })
+    navigate('/login', { replace: true })
   }
 
   const themes: { value: ThemeMode; label: string; icon: typeof Sun }[] = [
@@ -192,14 +223,11 @@ export function ProfilePage() {
             </div>
 
             <div className="flex items-center gap-3 pt-1">
-              <Button variant="primary" onClick={save}>
+              <Button variant="primary" onClick={save} loading={saving} disabled={!isDirty}>
                 Save changes
               </Button>
-              {saved ? (
-                <span className="inline-flex animate-rise items-center gap-1.5 text-sm font-medium text-success">
-                  <Check className="size-4" aria-hidden />
-                  Saved
-                </span>
+              {!isDirty ? (
+                <span className="text-[13px] text-faint">You&apos;re all caught up</span>
               ) : null}
             </div>
           </Section>
@@ -242,8 +270,21 @@ export function ProfilePage() {
             </div>
           </Section>
 
+          {/* Session */}
+          <Section title="Session" subtitle={`Signed in as @${currentUser.username}`}>
+            <p className="text-sm leading-relaxed text-muted">
+              Signing out keeps your chats and contacts safe on this device.
+            </p>
+            <div>
+              <Button variant="secondary" onClick={handleSignOut} loading={signingOut}>
+                <LogOut className="size-4" aria-hidden />
+                Sign out
+              </Button>
+            </div>
+          </Section>
+
           {/* About */}
-          <Section title="About" icon={Info} subtitle="KRAPP APP · v0.1.0 · Phase 1 (UI)">
+          <Section title="About" icon={Info} subtitle="KRAPP APP · v0.1.0 · Phase 2 (UX)">
             <SafetyNotice />
           </Section>
 
@@ -265,15 +306,17 @@ export function ProfilePage() {
 
       <Modal
         open={confirmDelete}
-        onClose={() => setConfirmDelete(false)}
+        onClose={() => {
+          if (!deleting) setConfirmDelete(false)
+        }}
         title="Delete your account?"
         description="This permanently removes your profile, contacts and conversations. This can't be undone."
         footer={
           <>
-            <Button variant="ghost" onClick={() => setConfirmDelete(false)}>
+            <Button variant="ghost" onClick={() => setConfirmDelete(false)} disabled={deleting}>
               Cancel
             </Button>
-            <Button variant="danger" onClick={() => setConfirmDelete(false)}>
+            <Button variant="danger" onClick={handleDeleteAccount} loading={deleting}>
               Delete account
             </Button>
           </>

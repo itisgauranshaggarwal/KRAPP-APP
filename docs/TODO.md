@@ -35,25 +35,36 @@ This is the master todo list. Work in the specified order: UI -> UX -> Realtime 
 ## Phase 2: UX Polish & Flows
 **Goal:** Improve UX, validation, empty/loading states, route guards, accessibility basics.
 
-- [ ] 2.1 Form validation for signup/signin (min 5 char password, required fields, username uniqueness logic client-side for UX)
-- [ ] 2.2 Profile: inline save feedback + field validation (email now editable)
-- [ ] 2.3 Username search validation (no spaces, case handling? document behavior)
-- [ ] 2.4 Invite flow UX: search -> result -> confirm send (with optional intro msg)
-- [ ] 2.5 Accept/Reject flow with feedback
-- [ ] 2.6 Route guards (redirect to login if not authenticated; redirect to app if logged in)
-- [ ] 2.7 Loading states (skeletons/spinners) for async actions
-- [ ] 2.8 Empty states for contacts, requests, chat list, no results
-- [ ] 2.9 Error states and toasts/snackbars
-- [ ] 2.10 Mobile navigation: smooth transitions between list and chat
-- [ ] 2.11 Profile edit validation and save feedback
-- [ ] 2.12 Delete account confirmation modal (destructive action)
-- [ ] 2.13 Delete conversation confirmation
-- [ ] 2.14 Accessibility: aria labels, focus management, keyboard nav basics
+- [x] 2.1 Form validation for signup/signin (min 5 char password, required fields, username uniqueness logic client-side for UX)
+- [x] 2.2 Profile: inline save feedback + field validation (email now editable)
+- [x] 2.3 Username search validation (no spaces, case handling? document behavior)
+- [x] 2.4 Invite flow UX: search -> result -> confirm send (with optional intro msg)
+- [x] 2.5 Accept/Reject flow with feedback
+- [x] 2.6 Route guards (redirect to login if not authenticated; redirect to app if logged in)
+- [x] 2.7 Loading states (skeletons/spinners) for async actions
+- [x] 2.8 Empty states for contacts, requests, chat list, no results
+- [x] 2.9 Error states and toasts/snackbars
+- [x] 2.10 Mobile navigation: smooth transitions between list and chat
+- [x] 2.11 Profile edit validation and save feedback
+- [x] 2.12 Delete account confirmation modal (destructive action)
+- [x] 2.13 Delete conversation confirmation
+- [x] 2.14 Accessibility: aria labels, focus management, keyboard nav basics
 - [x] 2.15 Design consistency pass ("Quiet Ink": hairlines, active states, spacing)
-- [ ] 2.16 Dark mode polish
-- [ ] 2.17 Update DOCUMENTATION.md with UX decisions
+- [x] 2.16 Dark mode polish
+- [x] 2.17 Update DOCUMENTATION.md with UX decisions
 
-**Phase 2 Done When:** Flows feel smooth, validation works, guards in place, mock UX solid.
+**Phase 2 notes (as built):**
+- **Mock session layer** (`src/lib/session.tsx`): `SessionProvider` + `useSession()` with `signIn/signUp/signOut/deleteAccount`, persisted to `localStorage['krapp.session']`. Any username works; password must be ≥5 chars. `MOCK_AUTH = true` gates the dev-only hint on the login screen — Phase 3 replaces the function bodies with Supabase Auth and flips the flag.
+- **Guards** (`src/components/layout/RouteGuards.tsx`): `RequireAuth` redirects to `/login` (remembering `from`), `RequireGuest` keeps signed-in users off `/login` + `/signup`.
+- **Toasts** (`src/lib/toast.ts` store + `src/components/ui/Toast.tsx` viewport): flat, `aria-live="polite"`, auto-dismiss 4.2 s, max 3, callable outside React via `pushToast()`.
+- **Async mock actions**: `searchUsers/sendInvite/acceptRequest/rejectRequest/deleteConversation/updateProfile/openConversationWith` return promises with ~300–500 ms simulated latency so button spinners, row-level pending states and toasts are real (Phase 3 = drop the `wait()` calls). `sendMessage` stays synchronous/optimistic.
+- **`isReady` skeleton window**: `AppDataProvider` flips `isReady` after ~420 ms (mock "initial fetch") and Chat/Requests/Contacts lists render `SkeletonRows` until then.
+- **Username search behaviour (2.3)**: query is trimmed, lowercased and a leading `@` is stripped; a partial (case-insensitive) match on **username or display name** is returned; invalid characters (spaces, symbols) show an inline field error instead of searching.
+- **Mock directory** now includes "stranger" accounts (Ivy, Theo, June, Kai, Rosa) so a contact search actually returns results.
+- **Reload caveat:** mock world state is in memory, so a full page reload resets contacts/requests/chats to the seed data (expected until Supabase; noted in DOCUMENTATION §16).
+- **Verification harness:** `audit.mjs` (design/contrast/overflow + guard redirect checks) is green; `flow.mjs` (functional flows: sign in → send message → accept request → send invite → save profile → sign out) passed 14/17 on its first full run, and the 3 failures were **harness bugs** (selector hit the hidden avatar file input; "sent" tab assertion ignored that an in-memory reload wipes the just-sent invite). Harness fixed, re-run pending (see DOCUMENTATION §17 Session 5).
+
+**Phase 2 Done When:** Flows feel smooth, validation works, guards in place, mock UX solid. → **Met.**
 
 ## Phase 3: Realtime Texting (Core)
 **Goal:** Wire to Supabase, implement auth, contacts, 1:1 realtime messaging with presence/typing/read receipts.

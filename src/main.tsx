@@ -9,6 +9,7 @@ import '@fontsource/fira-sans/600.css'
 import '@fontsource/fira-sans/700.css'
 
 import { App } from '@/App'
+import { SessionProvider } from '@/lib/session'
 import { ThemeProvider } from '@/lib/theme'
 import { AppDataProvider } from '@/store/AppDataProvider'
 import './index.css'
@@ -16,11 +17,13 @@ import './index.css'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider>
-      <AppDataProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </AppDataProvider>
+      <SessionProvider>
+        <AppDataProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </AppDataProvider>
+      </SessionProvider>
     </ThemeProvider>
   </StrictMode>,
 )

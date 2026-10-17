@@ -36,10 +36,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     <button
       ref={ref}
       disabled={disabled || loading}
+      aria-busy={loading || undefined}
       className={cn(
         'inline-flex select-none items-center justify-center font-medium',
         'transition-colors duration-100',
-        'disabled:pointer-events-none disabled:opacity-50',
+        'disabled:cursor-not-allowed disabled:opacity-50',
         variants[variant],
         sizes[size],
         className,
@@ -48,7 +49,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     >
       {loading ? (
         <span
-          className="mr-2 size-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+          className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent"
           aria-hidden
         />
       ) : null}

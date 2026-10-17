@@ -17,7 +17,7 @@ export function ChatsScreen() {
       <aside
         className={cn(
           'w-full flex-col lg:flex lg:w-[380px] xl:w-[420px]',
-          conversationId ? 'hidden lg:flex' : 'flex',
+          conversationId ? 'hidden lg:flex' : 'flex animate-fade lg:animate-none',
         )}
       >
         <ChatList
@@ -26,7 +26,12 @@ export function ChatsScreen() {
         />
       </aside>
 
-      <section className={cn('min-w-0 flex-1', conversationId ? 'flex' : 'hidden lg:flex')}>
+      <section
+        className={cn(
+          'min-w-0 flex-1',
+          conversationId ? 'flex animate-slide-in lg:animate-none' : 'hidden lg:flex',
+        )}
+      >
         <div className="min-w-0 flex-1">
           <Outlet />
         </div>

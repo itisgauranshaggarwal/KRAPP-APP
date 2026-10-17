@@ -288,5 +288,51 @@ export const mockConversations: Conversation[] = [
   },
 ]
 
-/** Existing accounts that a "new contact" search can find (mock directory). */
-export const mockDirectory: User[] = Object.values(mockUsers)
+/**
+ * Accounts a "new contact" search can find (mock directory). Includes the
+ * people already in the user's world, plus strangers who are not yet contacts.
+ */
+const mockStrangers: User[] = [
+  {
+    id: 'u-ivy',
+    username: 'ivy.codes',
+    displayName: 'Ivy Nguyen',
+    avatarUrl: null,
+    online: true,
+    lastSeenAt: new Date().toISOString(),
+  },
+  {
+    id: 'u-theo',
+    username: 'theo_p',
+    displayName: 'Theo Alvarez',
+    avatarUrl: null,
+    online: false,
+    lastSeenAt: ago(45 * MINUTE),
+  },
+  {
+    id: 'u-june',
+    username: 'june.bee',
+    displayName: 'June Okafor',
+    avatarUrl: null,
+    online: false,
+    lastSeenAt: ago(8 * HOUR),
+  },
+  {
+    id: 'u-kai',
+    username: 'kai_skates',
+    displayName: 'Kai Tanaka',
+    avatarUrl: null,
+    online: true,
+    lastSeenAt: new Date().toISOString(),
+  },
+  {
+    id: 'u-rosa',
+    username: 'rosa.m',
+    displayName: 'Rosa Delgado',
+    avatarUrl: null,
+    online: false,
+    lastSeenAt: ago(2 * DAY),
+  },
+]
+
+export const mockDirectory: User[] = [...Object.values(mockUsers), ...mockStrangers]

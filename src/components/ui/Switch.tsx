@@ -27,7 +27,7 @@ export function Switch({ checked, onChange, label, disabled, className }: Switch
         className={cn(
           'relative inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5',
           'transition-colors duration-150',
-          'disabled:pointer-events-none disabled:opacity-50',
+          'disabled:cursor-not-allowed disabled:opacity-50',
           checked ? 'bg-primary' : 'bg-surface-3 border border-line-strong',
         )}
       >

@@ -22,10 +22,11 @@ export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>
   size?: Size
   /** Required for accessibility when the button has no visible text. */
   label: string
+  loading?: boolean
 }
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(
-  { className, variant = 'ghost', size = 'md', label, children, ...props },
+  { className, variant = 'ghost', size = 'md', label, loading = false, disabled, children, ...props },
   ref,
 ) {
   return (
@@ -34,17 +35,26 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
       type="button"
       aria-label={label}
       title={label}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
       className={cn(
         'inline-flex shrink-0 items-center justify-center',
         'transition-colors duration-100',
-        'disabled:pointer-events-none disabled:opacity-50',
+        'disabled:cursor-not-allowed disabled:opacity-50',
         variants[variant],
         sizes[size],
         className,
       )}
       {...props}
     >
-      {children}
+      {loading ? (
+        <span
+          className="size-3.5 animate-spin rounded-full border-2 border-current border-t-transparent"
+          aria-hidden
+        />
+      ) : (
+        children
+      )}
     </button>
   )
 })

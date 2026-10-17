@@ -8,16 +8,34 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { IconButton } from '@/components/ui/IconButton'
+import { SkeletonRows } from '@/components/ui/Skeleton'
 import { Tabs } from '@/components/ui/Tabs'
 import { formatListTime } from '@/lib/format'
+import { pushToast } from '@/lib/toast'
 import { useAppData } from '@/store/AppDataProvider'
 import type { Contact } from '@/types'
 
 export function RequestsPage() {
-  const { incomingRequests, outgoingRequests, acceptRequest, rejectRequest, contacts } = useAppData()
+  const { incomingRequests, outgoingRequests, acceptRequest, rejectRequest, contacts, isReady } =
+    useAppData()
   const [tab, setTab] = useState('received')
 
   const items = tab === 'received' ? incomingRequests : outgoingRequests
+
+  async function handleAccept(request: Contact) {
+    const firstName = request.user.displayName.split(' ')[0]
+    await acceptRequest(request.id)
+    pushToast({
+      title: `${firstName} is now a contact`,
+      description: 'Say hi — your chat is ready.',
+      tone: 'success',
+    })
+  }
+
+  async function handleReject(request: Contact) {
+    await rejectRequest(request.id)
+    pushToast({ title: `Request from ${request.user.displayName} declined` })
+  }
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-bg">
@@ -39,7 +57,11 @@ export function RequestsPage() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-3 scroll-soft">
-        {items.length === 0 ? (
+        {!isReady ? (
+          <div className="mx-auto max-w-2xl overflow-hidden rounded-xl border border-line bg-surface">
+            <SkeletonRows rows={2} />
+          </div>
+        ) : items.length === 0 ? (
           <EmptyState
             icon={tab === 'received' ? Inbox : UserPlus}
             title={tab === 'received' ? 'No pending requests' : 'No sent requests'}
@@ -56,8 +78,8 @@ export function RequestsPage() {
               <RequestRow
                 key={request.id}
                 request={request}
-                onAccept={() => acceptRequest(request.id)}
-                onReject={() => rejectRequest(request.id)}
+                onAccept={() => handleAccept(request)}
+                onReject={() => handleReject(request)}
               />
             ))}
           </ul>
@@ -73,10 +95,20 @@ function RequestRow({
   onReject,
 }: {
   request: Contact
-  onAccept: () => void
-  onReject: () => void
+  onAccept: () => Promise<void>
+  onReject: () => Promise<void>
 }) {
   const isReceived = request.direction === 'incoming'
+  const [busy, setBusy] = useState<'accept' | 'reject' | null>(null)
+
+  async function run(action: 'accept' | 'reject', handler: () => Promise<void>) {
+    setBusy(action)
+    try {
+      await handler()
+    } finally {
+      setBusy(null)
+    }
+  }
 
   return (
     <li className="animate-rise border-b border-line p-4 last:border-b-0">
@@ -120,11 +152,23 @@ function RequestRow({
 
       {isReceived ? (
         <div className="mt-3 flex justify-end gap-2">
-          <Button variant="ghost" size="sm" onClick={onReject}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => run('reject', onReject)}
+            loading={busy === 'reject'}
+            disabled={busy !== null}
+          >
             <X className="size-4" aria-hidden />
             Reject
           </Button>
-          <Button variant="primary" size="sm" onClick={onAccept}>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => run('accept', onAccept)}
+            loading={busy === 'accept'}
+            disabled={busy !== null}
+          >
             <Check className="size-4" aria-hidden />
             Accept
           </Button>

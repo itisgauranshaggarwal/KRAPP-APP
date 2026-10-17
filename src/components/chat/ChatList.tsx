@@ -5,6 +5,7 @@ import { ChatListItem } from '@/components/chat/ChatListItem'
 import { NewContactDialog } from '@/components/contacts/NewContactDialog'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Input } from '@/components/ui/Input'
+import { SkeletonRows } from '@/components/ui/Skeleton'
 import { useAppData } from '@/store/AppDataProvider'
 
 export interface ChatListProps {
@@ -13,7 +14,7 @@ export interface ChatListProps {
 }
 
 export function ChatList({ activeId, onSelect }: ChatListProps) {
-  const { conversations, currentUser } = useAppData()
+  const { conversations, currentUser, isReady } = useAppData()
   const [query, setQuery] = useState('')
 
   const unreadTotal = useMemo(
@@ -57,7 +58,9 @@ export function ChatList({ activeId, onSelect }: ChatListProps) {
       </div>
 
       <div className="flex-1 overflow-y-auto pb-3 scroll-soft">
-        {filtered.length === 0 ? (
+        {!isReady ? (
+          <SkeletonRows rows={6} />
+        ) : filtered.length === 0 ? (
           <EmptyState
             icon={MessageCircle}
             title={query ? 'No chats found' : 'No chats yet'}

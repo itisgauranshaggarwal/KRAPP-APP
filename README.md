@@ -3,7 +3,11 @@
 Simple 1:1 chat app with username-based invites, realtime messaging, light/dark mode, and a quiet, product-grade interface. Built as a free-tier-only hobby project.
 
 ## Project Status
-**Phase 1 (UI Foundation) complete, plus a full UI redesign.** The full UI runs on mock data: auth screens, chats, requests, contacts, profile, light/dark theme, responsive layout. Backend wiring starts in Phase 3.
+**Phases 1–2 complete.** Phase 1 built the UI foundation; Phase 2 added the UX layer: a mock session with route guards, form validation, toasts, loading skeletons, empty states, a modal focus trap, and mobile list↔chat transitions. Everything still runs on mock data — backend wiring starts in Phase 3.
+
+**Design:** "Quiet Ink" — neutral surfaces, hairlines instead of shadows, strong type hierarchy and a single petrol-teal accent (no gradients, glows or glassmorphism). Tokens live in `src/index.css`.
+
+**Try it:** any username signs in; the password just needs 5+ characters (mock auth, `MOCK_AUTH` in `src/lib/session.tsx`).
 
 **Design:** "Quiet Ink" — neutral surfaces, hairlines instead of shadows, strong type hierarchy and a single petrol-teal accent (no gradients, glows or glassmorphism). Tokens live in `src/index.css`.
 
@@ -20,7 +24,9 @@ npm run lint
 
 ## Features
 - Signup/Signin with username + password (email is editable later in Profile)
-- (Phase 1 = UI only, mock data)
+- Route guards + mock session (persisted to `localStorage`; Supabase Auth in Phase 3)
+- Toasts, loading skeletons and empty states for every list and async action
+- Accessibility basics: modal focus trap, skip link, labelled controls, `aria-live` notifications
 - Add contacts by username only, with single intro message on invite
 - Accept/Reject invites
 - 1:1 chat: text, presence, typing, sent/delivered/seen

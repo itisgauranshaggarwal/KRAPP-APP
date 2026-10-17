@@ -135,11 +135,15 @@ To be filled during implementation.
 
 ## 8. Auth Flow
 
-- **Signup:** POST-like via Supabase Auth (email+password). Then create `users` profile with display_name, username, email. Check username unique.
-- **Signin:** email+password via Supabase Auth. But UI is username+password - so we resolve username -> email first, then sign in. Document exact approach.
-- **Session:** onAuthStateChange; persist.
-- **Profile edit:** update allowed fields (username/display_name/email/avatar/bio).
-- **Delete account:** cascade delete profile + auth user.
+**Current (Phase 2 — mock, in `src/lib/session.tsx`):**
+- `SessionProvider` holds `{ username, displayName, email? }` and persists it to `localStorage['krapp.session']`.
+- **Signup:** validate the form → `signUp()` stores the session → `RequireGuest`/navigation sends the user to `/chats`.
+- **Signin:** username + password. Mock rule: any username is accepted, password must be ≥5 chars (otherwise a form-level error is shown). Display name is derived from the username (`aria.malik` → `Aria Malik`).
+- **Guards:** `RequireAuth` (redirect `/login`, remembering `from`) and `RequireGuest` (redirect `/chats`).
+- **Profile edit / sign out / delete account** all go through `useSession()`; identity is derived from the session in `AppDataProvider`, so the app reflects the signed-in account.
+- `MOCK_AUTH` flag = temporary; the dev-only "demo build" hint on `/login` disappears in production builds.
+
+**Phase 3 (planned):** Supabase Auth with email+password. Because the UI is username+password, resolve `username → email` first, then sign in. Session via `onAuthStateChange`. Signup creates the auth user plus a `users` profile row (username uniqueness enforced here). Delete account cascades profile + auth user. Replace the mock function bodies; keep the same `useSession()` surface so pages and guards don't change.
 
 ## 9. Contacts & Invite Flow
 
@@ -173,8 +177,8 @@ Retention: on schedule (daily), keep only last 5 messages per conversation_id or
 ## 12. UI Structure & Routes
 
 **Routes (as built):**
-- Public: `/login`, `/signup`
-- Under `AppShell`: `/` → redirect `/chats`
+- Public (wrapped in `RequireGuest`): `/login`, `/signup` — signed-in users are redirected to `/chats`
+- Under `AppShell` (wrapped in `RequireAuth`): `/` → redirect `/chats`
   - `/chats` (layout) → index (placeholder) | `/chats/:conversationId` (chat)
   - `/requests`, `/contacts`, `/profile`
   - `*` → NotFound (inside shell)
@@ -185,22 +189,25 @@ src/
   components/
     chat/       MessageBubble, MessageList, MessageInput, MessageStatusTicks, ChatList, ChatListItem, ChatView
     contacts/   NewContactDialog
-    layout/     AppShell, IconRail, BottomNav, PageHeader, nav.ts
+    layout/     AppShell, IconRail, BottomNav, PageHeader, RouteGuards, nav.ts
     shared/     AppLogo, ThemeToggle, SafetyNotice
     ui/         Button, IconButton, Input, Avatar, Badge, CountBadge, Modal, Switch,
-                Tabs, Skeleton, SkeletonRows, EmptyState, index.ts (barrel)
-  data/         mock.ts (mock users/contacts/requests/conversations/messages/directory)
+                Tabs, Skeleton, SkeletonRows, EmptyState, Toast, index.ts (barrel)
+  data/         mock.ts (mock users/contacts/requests/conversations/messages/directory/strangers)
   hooks/        useMediaQuery.ts
-  lib/          utils.ts (cn, initials, avatarColor), format.ts (time/presence/duration/bytes),
-                theme.tsx (ThemeProvider + useTheme)
+  lib/          utils.ts (cn, initials), format.ts (time/presence/duration/bytes),
+                theme.tsx (ThemeProvider + useTheme), session.tsx (mock auth + useSession),
+                toast.ts (toast store + useToasts)
   pages/
     auth/       AuthLayout, LoginPage, SignupPage
     app/        ChatsScreen, ChatDetailPage (+ ChatsIndexPage), RequestsPage, ContactsPage, ProfilePage
     NotFoundPage.tsx
-  store/        AppDataProvider.tsx (mock data + actions; superseded by Supabase in Phase 3)
+  store/        AppDataProvider.tsx (mock data + async actions; superseded by Supabase in Phase 3)
   types/        index.ts
   App.tsx  main.tsx  index.css  vite-env.d.ts
 ```
+
+**Provider order (`main.tsx`):** `ThemeProvider` → `SessionProvider` → `AppDataProvider` → `BrowserRouter` → `App`. `App` also renders the single `ToastViewport`.
 
 **Responsive behavior:**
 - `AppShell` shows `IconRail` on `lg+`, `BottomNav` on mobile (hidden while a chat is open).
@@ -211,30 +218,37 @@ src/
 | Feature | Status | Notes |
 |---|---|---|
 | Project setup | ✅ Done | Vite 8 + React 19 + TS 6 |
-| Auth UI (signup/signin) | ✅ Done | Mock only; validation basic |
-| Contacts UI | ✅ Done | Search, list, remove |
-| Requests UI | ✅ Done | Received/Sent tabs, accept/reject |
+| Auth UI (signup/signin) | ✅ Done | Full validation; mock session + route guards |
+| Route guards | ✅ Done | `RequireAuth` / `RequireGuest`; `from` preserved on redirect |
+| Mock session layer | ✅ Done | `lib/session.tsx`; `localStorage` persistence; throws on invalid password |
+| Contacts UI | ✅ Done | Search, list, get-or-create chat, remove |
+| Requests UI | ✅ Done | Received/Sent tabs, accept/reject with per-row pending + toasts |
 | Chat UI | ✅ Done | Bubbles, day separators, input, placeholder pane |
 | "Quiet Ink" design system | ✅ Done | Neutral surfaces + single petrol accent; tokens in index.css |
 | Light/Dark mode | ✅ Done | light/dark/system + no-flash script |
-| New contact dialog | ✅ Done | Username search + single intro message |
-| Profile UI | ✅ Done | Grouped settings panel (identity, account, appearance, about, danger) |
+| New contact dialog | ✅ Done | Username search (async + skeleton) + single intro message |
+| Profile UI | ✅ Done | Grouped settings panel; dirty-state save; sign out; delete confirmation |
 | Safety notice | ✅ Done | Auth screens + Profile |
 | Brand identity | ✅ Done | Own "Quiet Ink" system (neutral + petrol teal), not a WhatsApp-green clone |
+| Toasts / error states | ✅ Done | `lib/toast.ts` store + `ToastViewport` (`aria-live`) |
+| Loading states | ✅ Done | `isReady` list skeletons, action spinners, search skeleton |
+| Empty states | ✅ Done | Contacts, requests, chats, no-search-results, conversation-not-found |
+| Accessibility basics | ✅ Done | Modal focus trap + restore, skip link, `<main>` landmark, `aria-busy`, target sizes |
+| Mobile transitions | ✅ Done | List↔chat `slide-in`/`fade` (disabled on `lg`) |
 | Supabase integration | ⏳ Not started | Phase 3 |
-| Auth (username+password) | ⏳ Not started | Mock nav only |
+| Auth (real, username+password) | ⏳ Not started | Mock only; swap `session.tsx` bodies in Phase 3 |
 | Contacts/invites (real) | ⏳ Not started | Mock state only |
 | Realtime messaging | ⏳ Not started | Phase 3 |
 | Presence/typing/read receipts | ⏳ Not started | UI affordances exist (ticks, typing bubble) |
 | Retention (last 5 msgs) | ⏳ Not started | Phase 3 |
 | Media upload/display | ⏳ Not started | Phase 4 |
 | Voice notes | ⏳ Not started | Phase 4 (mic button is a placeholder) |
-| Account deletion | 🟡 UI only | Confirm modal; no real deletion yet |
+| Account deletion | 🟡 Mock only | Confirm modal → clears the mock session + toast + redirect |
 
 ## 14. TODO / Next Steps
 
 **Immediate next step:**
-Finish Phase 1 verification: `npm run build` must pass, then dev-server smoke test (auth → chats → open chat → send message → requests accept). Then begin **Phase 2 (UX polish)** per TODO.md.
+Phase 2 is implemented and verified (`tsc -b`, `npm run build`, `npm run lint`, design audit, guards). Re-run the functional flow harness (`flow.mjs`) to confirm all checks green, get the user's visual sign-off on the live dev server, then begin **Phase 3 (Supabase + realtime)** per TODO.md.
 
 ## 15. Decisions Log
 
@@ -273,18 +287,35 @@ Use this section to record every significant decision with rationale, date, and 
 | 2026-10-17 | Profile hero/stats row removed in favour of one grouped settings panel | "Avoid excessive rounded cards"; settings should feel like a product | `ProfilePage` rewritten (identity → account → appearance → about → danger) |
 | 2026-10-17 | `avatarColor()` (purple palette) deleted — it was unused | Dead code, and it referenced the old brand | `lib/utils.ts` keeps only `cn` + `initials` |
 | 2026-10-17 | Verification is programmatic too: headless-Chrome CDP audit asserts no gradients/backdrop-blur/overflow, correct accent per theme, and text contrast ≥4.5:1 | Compensates for not being able to view screenshots directly | `faint` text tokens darkened; audit script run over 14 routes × 2 themes |
+| 2026-10-17 | **Mock session layer + route guards** (`lib/session.tsx`, `layout/RouteGuards.tsx`) instead of leaving all routes open | TODO 2.6 needs auth state; building it now with the same API Supabase will use avoids a later refactor | `RequireAuth`/`RequireGuest`; `localStorage['krapp.session']`; `MOCK_AUTH` flag for the dev-only hint |
+| 2026-10-17 | Mock auth accepts **any username** with a ≥5-char password | No backend yet; keeps the demo usable while still exercising the failure path | Form-level error box on `/login`; signup keeps full field validation |
+| 2026-10-17 | Identity (display name/username/email) is **derived from the session** inside `AppDataProvider` (memo), not copied into state | Avoids a `setState`-in-effect sync and keeps one source of truth | Signing in as `aria.malik` immediately renames the profile; no effect needed |
+| 2026-10-17 | **Async mock actions with simulated latency** (`wait(300–500ms)`) instead of instant in-memory mutations | Produces real loading/pending UI now, and Phase 3 only has to delete the `wait()` calls | `searchUsers/sendInvite/acceptRequest/rejectRequest/deleteConversation/updateProfile/openConversationWith` return promises; `sendMessage` stays optimistic/sync |
+| 2026-10-17 | `isReady` "initial fetch" flag drives `SkeletonRows` on the chat/requests/contacts lists | Demonstrates loading states honestly (one short 420 ms first paint) without flashing on every navigation | `Skeleton`/`SkeletonRows` are finally used (closes an old tech-debt note) |
+| 2026-10-17 | Toasts are a **tiny external store** (`useSyncExternalStore`), not a React context | Callable from anywhere (including future non-React failure handlers); no extra provider layer; `aria-live` region mounted once | `pushToast()`, `dismissToast()`, `ToastViewport` in `App` |
+| 2026-10-17 | Added `openConversationWith(user)` (get-or-create) to the provider | Contact rows previously did nothing when no conversation existed yet (silent dead click) | Contacts "message" button always opens (or creates) a chat, with a pending spinner |
+| 2026-10-17 | Replaced `disabled:pointer-events-none` with `disabled:cursor-not-allowed` on Button/IconButton/Switch | `pointer-events-none` suppressed tooltips on disabled icon buttons (e.g. the mic) and was flagged by review | Disabled controls still show why they're disabled; review warnings cleared |
+| 2026-10-17 | `useMediaQuery` rewritten with `useSyncExternalStore` | Removed the `set-state-in-effect` lint warning and the redundant effect | Cleaner subscriptions; same public API |
+| 2026-10-17 | Mobile list↔chat transition via CSS `slide-in`/`fade` (18–200 ms, disabled at `lg`) | TODO 2.10; small purposeful motion only | New `--animate-slide-in` keyframe in `index.css`; no layout shift |
+| 2026-10-17 | `Modal` gets a real focus trap, focus restore, and `aria-labelledby`/`aria-describedby` (was `aria-label`/Escape-only) | TODO 2.14 a11y basics | Tab/Shift+Tab cycle inside the dialog; focus returns to the trigger on close |
+| 2026-10-17 | Mock directory extended with "stranger" accounts (Ivy, Theo, June, Kai, Rosa) | Search always returned nothing because the directory only contained people already in the world | New-contact search now produces real results |
+| 2026-10-17 | Kept a **dev-only** demo hint on `/login` (`MOCK_AUTH && import.meta.env.DEV`) | Testers need to know any username works; production builds stay clean | Hint vanishes from the production bundle's UI |
+| 2026-10-17 | Functional flows are verified by a CDP harness (`flow.mjs`) in addition to the design audit | The agent cannot click through the UI by hand; this makes "flows feel smooth" checkable | Signs in, opens a chat, sends a message, accepts a request, sends an invite, saves the profile, signs out |
 
 ## 16. Known Issues & Tech Debt
 
 - **npm on this machine is slow / flaky.** A first `npm install` was interrupted by a tool timeout, leaving `node_modules` partially extracted and `package.json` missing 5 deps (react-router-dom, lucide-react, clsx, tailwind-merge, @fontsource/fira-sans). Reinstalled. Also had to extract `lucide-react` from its npm tarball manually once because its `.d.ts` was missing from a corrupted extraction. If a package's types appear missing, verify against `npm pack <pkg>@<ver>`.
-- **Verified:** `npm run build` (tsc + vite) ✅, `npm run lint` ✅ (warnings only), dev server smoke-tested at `http://localhost:5173` (all routes/modules compile).
-- **Bundle size:** main JS ~941 kB (~254 kB gzip) — larger than ideal. Address with route-level code splitting in Phase 5. CSS is ~41 kB (down from ~54 kB after the redesign).
-- `Skeleton`/`SkeletonRows` exist but are not yet used by pages (Phase 2 loading states).
-- `Modal` focus management is basic (focus-in + Escape close); full focus trap is Phase 2 (a11y).
+- **Verified (Phase 2):** `npx tsc -b` ✅, `npm run build` ✅ (JS ~952 kB / 259 kB gzip, CSS 45.6 kB), `npm run lint` ✅ (clean), design audit ✅ (no overflow/gradients/backdrop-filter; accent + contrast correct; both guard redirects verified).
+- **Bundle size:** main JS ~952 kB (~259 kB gzip) — single chunk, larger than ideal. Route-level code splitting is planned for Phase 5 (TODO 5.x). CSS is ~45.6 kB (up slightly from 41 kB after Phase 2 utilities).
+- **Anti-pattern: `vite build` fails with `ENOTEMPTY ... dist\assets`** while `vite preview` is serving `dist/`. Stop the preview server before rebuilding (or delete `dist` first).
+- **Mock world state is in memory only:** a full page reload resets contacts/requests/conversations to the seed data (the *session* does persist via `localStorage`). Expected until Supabase is wired in Phase 3 — the functional harness works around it.
+- **Mock actions have artificial latency** (`wait(...)` in `AppDataProvider` / `session.tsx`). These calls must be removed in Phase 3 when real network calls replace them.
+- `isAvailableUsername` is still synchronous/length-based (mock). Phase 3 needs an async uniqueness check against the DB.
+- `Modal` focus management is now a full trap + restore; backdrop click and Escape both close. Not yet `inert`-ing the background (acceptable for MVP).
 - `21st` CLI is not signed in on this machine, so catalog search/generate is unavailable; `npx 21st review <paths>` works (deterministic local rules) and is part of the verification loop.
-- Screenshot tooling: headless Chrome + a small CDP script is used for UI audits (temp dir, not committed). This agent cannot view images, so visual verification relies on the CDP audit + the user's live dev server.
+- Screenshot/flow tooling: headless Chrome + small CDP scripts live in the temp dir (not committed). This agent cannot view images, so visual verification relies on the CDP audit + the user's live dev server.
 - No Prettier config yet.
-- `AppDataProvider` keeps all state in memory; nothing persists across reloads (expected pre-Supabase).
+- Lint is kept clean by three targeted `eslint-disable-next-line react/only-export-components` comments (provider + hook in the same file: `theme.tsx`, `session.tsx`, `AppDataProvider.tsx`). Splitting hooks into separate modules is the cleaner long-term fix.
 
 ## 17. Session Log
 
@@ -332,6 +363,22 @@ Use this section to record every significant decision with rationale, date, and 
 - **Verification:** `tsc -b` ✅, `npm run build` ✅ (CSS 54 kB → 41 kB), `npm run lint` ✅ (3 pre-existing warnings). `npx 21st review src`: all **errors fixed** (non-semantic trigger div → button; input outline now paired with a focus ring); warnings are intentional (autofocus on first auth field, `disabled:pointer-events-none`).
 - **Programmatic UI audit** (headless Chrome via CDP, 14 routes × light/dark, 1440×900 + 390×844, script in the temp dir): no horizontal overflow, no offscreen elements, **zero** gradients, **zero** `backdrop-filter`, Fira Sans applied, accent resolves correctly per theme, and muted/faint text contrast ≥4.66:1 everywhere.
 - Next: Phase 2 (route guards, validation, loading/empty states, focus trap, code splitting).
+
+**Session 5 (2026-10-17) — Phase 2: UX polish & flows**
+- **Mock session + guards.** New `src/lib/session.tsx` (`SessionProvider`, `useSession`, `MOCK_AUTH`, `MIN_PASSWORD`): signup/signin/signout/deleteAccount with ~500 ms simulated latency, `localStorage['krapp.session']` persistence, and a friendly form-level error for a too-short password. New `src/components/layout/RouteGuards.tsx` (`RequireAuth` remembers `from`; `RequireGuest`). `App.tsx` wires both; `main.tsx` provider order is now Theme → Session → AppData → Router.
+- **Toasts.** New `src/lib/toast.ts` (external store via `useSyncExternalStore`, `pushToast`/`dismissToast`, max 3, 4.2 s) + `src/components/ui/Toast.tsx` (`ToastViewport`, `aria-live="polite"`, `role="status"`/`"alert"`, flat styling, dismiss button). Mounted once in `App`.
+- **Async mock actions + loading states.** `AppDataProvider` now returns promises for `searchUsers`, `sendInvite`, `acceptRequest`, `rejectRequest`, `deleteConversation`, `updateProfile`, plus a new `openConversationWith` (get-or-create chat, fixes a silent dead click on contact rows). Added `isReady` (~420 ms mock initial fetch) which drives `SkeletonRows` in `ChatList`, `RequestsPage` and `ContactsPage`; the new-contact search shows a skeleton while searching and guards against out-of-order responses.
+- **Feedback everywhere.** Accept/reject (per-row pending + toasts), invite sent, profile saved, conversation deleted, profile picture updated, signed out, account deleted. `Button`/`IconButton` gained a proper `loading` spinner (+ `aria-busy`); `IconButton` gained `loading`; removed the stray `mr-2` from the Button spinner so text buttons and icon buttons both space correctly.
+- **Validation.** Login/signup keep inline field errors and now also show a form-level alert; profile save is disabled until something actually changes ("You're all caught up"); new-contact query rejects spaces/symbols with an inline hint; documented search behaviour (strip `@`, lowercase, partial match on username **or** display name).
+- **a11y.** `Modal` rewritten with a real focus trap (Tab/Shift+Tab cycle), focus restore on close, `aria-labelledby`/`aria-describedby` via `useId`, and a bottom-sheet layout on mobile. `AppShell` gained a focus-only "Skip to content" link and a `<main id="main-content">` landmark. Disabled controls now use `cursor-not-allowed` (tooltips work) instead of `pointer-events-none`. `useMediaQuery` rewritten with `useSyncExternalStore` (removes a lint warning).
+- **Motion.** New `--animate-slide-in` keyframe; `ChatsScreen` slides the chat pane in / fades the list on mobile, disabled at `lg`.
+- **Mock data.** `mockDirectory` now includes five "stranger" accounts so contact search returns results.
+- **Verification.** `npx tsc -b` ✅, `npm run build` ✅, `npm run lint` ✅ (clean, exit 0). Design audit (`audit.mjs`, now seeding `krapp.session` and checking guards): 14 routes × light/dark — no overflow, no gradients, no `backdrop-filter`, Fira Sans, accent per theme, contrast ≥4.69:1, `/chats` signed-out → `/login` ✅, `/login` signed-in → `/chats` ✅. Only remaining audit notes were the visually-hidden skip link (excluded) and inline footer links (now given tap padding). Functional harness (`flow.mjs`): 14/17 on the first full run — the 3 failures were harness bugs (selecting the hidden avatar file input; asserting a just-sent invite survived an in-memory reload). Harness fixed; **re-run pending**.
+- **Where we stopped (resume here):**
+  1. Restart the preview server and re-run `flow.mjs` — expect 17/17 (commands + script paths in `SESSION_RESUME.md`).
+  2. Hand the user the live dev server (`http://localhost:5173`) for visual sign-off of the Phase 2 additions (toasts, skeletons, dialogs, guards).
+  3. Commit Phase 2 (docs + code) if not already committed.
+  4. Then start **Phase 3** (TODO.md 3.1): Supabase project + env vars, schema/RLS, then swap `session.tsx` bodies for Supabase Auth and delete the `wait()` latencies.
 
 ## 18. Setup Instructions
 

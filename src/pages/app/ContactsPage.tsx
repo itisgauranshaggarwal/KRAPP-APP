@@ -10,14 +10,18 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { IconButton } from '@/components/ui/IconButton'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
+import { SkeletonRows } from '@/components/ui/Skeleton'
+import { pushToast } from '@/lib/toast'
 import { useAppData } from '@/store/AppDataProvider'
 import type { Contact } from '@/types'
 
 export function ContactsPage() {
   const navigate = useNavigate()
-  const { contacts, conversations, deleteConversation } = useAppData()
+  const { contacts, conversations, deleteConversation, openConversationWith, isReady } = useAppData()
   const [query, setQuery] = useState('')
   const [pendingDelete, setPendingDelete] = useState<Contact | null>(null)
+  const [opening, setOpening] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase()
@@ -32,18 +36,31 @@ export function ContactsPage() {
     )
   }, [contacts, query])
 
-  function openChat(contact: Contact) {
-    const existing = conversations.find((item) => item.user.id === contact.user.id)
-    if (existing) {
-      navigate(`/chats/${existing.id}`)
+  async function openChat(contact: Contact) {
+    setOpening(contact.id)
+    try {
+      const conversationId = await openConversationWith(contact.user)
+      navigate(`/chats/${conversationId}`)
+    } finally {
+      setOpening(null)
     }
   }
 
-  function confirmDelete() {
+  async function confirmDelete() {
     if (!pendingDelete) return
-    const existing = conversations.find((item) => item.user.id === pendingDelete.user.id)
-    if (existing) deleteConversation(existing.id)
-    setPendingDelete(null)
+    const contact = pendingDelete
+    setDeleting(true)
+    try {
+      const existing = conversations.find((item) => item.user.id === contact.user.id)
+      if (existing) await deleteConversation(existing.id)
+      pushToast({
+        title: 'Conversation deleted',
+        description: `Your chat with ${contact.user.displayName} was removed.`,
+      })
+    } finally {
+      setDeleting(false)
+      setPendingDelete(null)
+    }
   }
 
   return (
@@ -66,7 +83,11 @@ export function ContactsPage() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-3 scroll-soft">
-        {filtered.length === 0 ? (
+        {!isReady ? (
+          <div className="mx-auto max-w-2xl overflow-hidden rounded-xl border border-line bg-surface">
+            <SkeletonRows rows={5} />
+          </div>
+        ) : filtered.length === 0 ? (
           <EmptyState
             icon={Users}
             title={query ? 'No contacts found' : 'No contacts yet'}
@@ -102,6 +123,7 @@ export function ContactsPage() {
                   variant="ghost"
                   size="sm"
                   className="hover:bg-primary-soft hover:text-primary"
+                  loading={opening === contact.id}
                   onClick={() => openChat(contact)}
                 >
                   <MessageCircle className="size-4.5" />
@@ -123,7 +145,9 @@ export function ContactsPage() {
 
       <Modal
         open={Boolean(pendingDelete)}
-        onClose={() => setPendingDelete(null)}
+        onClose={() => {
+          if (!deleting) setPendingDelete(null)
+        }}
         title="Delete conversation?"
         description={
           pendingDelete
@@ -132,10 +156,10 @@ export function ContactsPage() {
         }
         footer={
           <>
-            <Button variant="ghost" onClick={() => setPendingDelete(null)}>
+            <Button variant="ghost" onClick={() => setPendingDelete(null)} disabled={deleting}>
               Cancel
             </Button>
-            <Button variant="danger" onClick={confirmDelete}>
+            <Button variant="danger" onClick={confirmDelete} loading={deleting}>
               Delete
             </Button>
           </>

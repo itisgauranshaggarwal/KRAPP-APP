@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -16,7 +17,10 @@ import {
   mockMessages,
   mockOutgoingRequests,
 } from '@/data/mock'
+import { useSession } from '@/lib/session'
 import type { Contact, Conversation, Message, User } from '@/types'
+
+type ProfilePatch = Partial<Pick<User, 'displayName' | 'username' | 'email' | 'avatarUrl' | 'bio'>>
 
 interface AppData {
   currentUser: User
@@ -25,37 +29,71 @@ interface AppData {
   outgoingRequests: Contact[]
   conversations: Conversation[]
   messages: Record<string, Message[]>
+  /** False while the mock "initial fetch" is in flight (drives list skeletons). */
+  isReady: boolean
   /** Registered accounts matching a username query (excluding self/contacts). */
-  searchUsers: (query: string) => User[]
-  sendInvite: (user: User, introMessage?: string) => void
-  acceptRequest: (requestId: string) => void
-  rejectRequest: (requestId: string) => void
+  searchUsers: (query: string) => Promise<User[]>
+  sendInvite: (user: User, introMessage?: string) => Promise<void>
+  acceptRequest: (requestId: string) => Promise<void>
+  rejectRequest: (requestId: string) => Promise<void>
+  /** Optimistic + instant: matches how the realtime send will feel. */
   sendMessage: (conversationId: string, content: string) => void
+  /** Get-or-create the 1:1 conversation with a contact. */
+  openConversationWith: (user: User) => Promise<string>
   markConversationRead: (conversationId: string) => void
-  deleteConversation: (conversationId: string) => void
-  updateProfile: (
-    patch: Partial<Pick<User, 'displayName' | 'username' | 'email' | 'avatarUrl' | 'bio'>>,
-  ) => void
+  deleteConversation: (conversationId: string) => Promise<void>
+  updateProfile: (patch: ProfilePatch) => Promise<void>
   isAvailableUsername: (username: string) => boolean
 }
 
 const AppDataContext = createContext<AppData | null>(null)
 
+/** Simulated latency for "server" actions so loading states are real (Phase 3: remove). */
+const LATENCY_MS = 420
+const wait = (ms = LATENCY_MS) => new Promise<void>((resolve) => window.setTimeout(resolve, ms))
+
 let idCounter = 1000
 const nextId = (prefix: string) => `${prefix}-${++idCounter}`
 
 export function AppDataProvider({ children }: { children: ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<User>(mockCurrentUser)
+  const { user: sessionUser } = useSession()
+
+  const [profilePatch, setProfilePatch] = useState<ProfilePatch>({})
   const [contacts, setContacts] = useState<Contact[]>(mockContacts)
   const [incomingRequests, setIncomingRequests] = useState<Contact[]>(mockIncomingRequests)
   const [outgoingRequests, setOutgoingRequests] = useState<Contact[]>(mockOutgoingRequests)
   const [conversations, setConversations] = useState<Conversation[]>(mockConversations)
   const [messages, setMessages] = useState<Record<string, Message[]>>(mockMessages)
+  const [isReady, setIsReady] = useState(false)
+
+  // Mock "initial fetch" — lists show skeletons until this resolves.
+  useEffect(() => {
+    const timer = window.setTimeout(() => setIsReady(true), LATENCY_MS)
+    return () => window.clearTimeout(timer)
+  }, [])
+
+  /** The signed-in account drives identity; the rest is mock world state. */
+  const currentUser = useMemo<User>(() => {
+    const identity = sessionUser
+      ? {
+          username: sessionUser.username,
+          displayName: sessionUser.displayName,
+          email: sessionUser.email ?? mockCurrentUser.email,
+        }
+      : {
+          username: mockCurrentUser.username,
+          displayName: mockCurrentUser.displayName,
+          email: mockCurrentUser.email,
+        }
+
+    return { ...mockCurrentUser, ...identity, ...profilePatch }
+  }, [sessionUser, profilePatch])
 
   const searchUsers = useCallback(
-    (query: string): User[] => {
+    async (query: string): Promise<User[]> => {
       const needle = query.trim().toLowerCase().replace(/^@/, '')
       if (!needle) return []
+      await wait(320)
 
       const known = new Set<string>([
         currentUser.id,
@@ -74,7 +112,8 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     [currentUser.id, contacts, incomingRequests, outgoingRequests],
   )
 
-  const acceptRequest = useCallback((requestId: string) => {
+  const acceptRequest = useCallback(async (requestId: string) => {
+    await wait()
     setIncomingRequests((prev) => {
       const request = prev.find((item) => item.id === requestId)
       if (!request) return prev
@@ -98,11 +137,13 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
-  const rejectRequest = useCallback((requestId: string) => {
+  const rejectRequest = useCallback(async (requestId: string) => {
+    await wait(300)
     setIncomingRequests((prev) => prev.filter((item) => item.id !== requestId))
   }, [])
 
-  const sendInvite = useCallback((user: User, introMessage?: string) => {
+  const sendInvite = useCallback(async (user: User, introMessage?: string) => {
+    await wait()
     const request: Contact = {
       id: nextId('r'),
       user,
@@ -149,13 +190,31 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     [conversations, currentUser.id],
   )
 
+  const openConversationWith = useCallback(
+    async (user: User): Promise<string> => {
+      const existing = conversations.find((item) => item.user.id === user.id)
+      if (existing) return existing.id
+
+      await wait(220)
+      const id = `conv-${user.username}`
+      setConversations((prev) => [
+        { id, user, unreadCount: 0, updatedAt: new Date().toISOString() },
+        ...prev,
+      ])
+      setMessages((prev) => (prev[id] ? prev : { ...prev, [id]: [] }))
+      return id
+    },
+    [conversations],
+  )
+
   const markConversationRead = useCallback((conversationId: string) => {
     setConversations((prev) =>
       prev.map((item) => (item.id === conversationId ? { ...item, unreadCount: 0 } : item)),
     )
   }, [])
 
-  const deleteConversation = useCallback((conversationId: string) => {
+  const deleteConversation = useCallback(async (conversationId: string) => {
+    await wait(300)
     setConversations((prev) => prev.filter((item) => item.id !== conversationId))
     setMessages((prev) => {
       const next = { ...prev }
@@ -164,8 +223,9 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
-  const updateProfile = useCallback<AppData['updateProfile']>((patch) => {
-    setCurrentUser((prev) => ({ ...prev, ...patch }))
+  const updateProfile = useCallback(async (patch: ProfilePatch) => {
+    await wait(300)
+    setProfilePatch((prev) => ({ ...prev, ...patch }))
   }, [])
 
   const isAvailableUsername = useCallback(
@@ -190,11 +250,13 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       outgoingRequests,
       conversations,
       messages,
+      isReady,
       searchUsers,
       sendInvite,
       acceptRequest,
       rejectRequest,
       sendMessage,
+      openConversationWith,
       markConversationRead,
       deleteConversation,
       updateProfile,
@@ -207,11 +269,13 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       outgoingRequests,
       conversations,
       messages,
+      isReady,
       searchUsers,
       sendInvite,
       acceptRequest,
       rejectRequest,
       sendMessage,
+      openConversationWith,
       markConversationRead,
       deleteConversation,
       updateProfile,
@@ -222,6 +286,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
   return <AppDataContext.Provider value={value}>{children}</AppDataContext.Provider>
 }
 
+// eslint-disable-next-line react/only-export-components
 export function useAppData(): AppData {
   const context = useContext(AppDataContext)
   if (!context) throw new Error('useAppData must be used within an AppDataProvider')

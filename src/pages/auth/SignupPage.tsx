@@ -5,10 +5,9 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
 import { IconButton } from '@/components/ui/IconButton'
 import { Input } from '@/components/ui/Input'
+import { MIN_PASSWORD, useSession } from '@/lib/session'
 import { AuthLayout } from '@/pages/auth/AuthLayout'
 import { useAppData } from '@/store/AppDataProvider'
-
-const MIN_PASSWORD = 5
 
 interface Errors {
   displayName?: string
@@ -21,6 +20,7 @@ const USERNAME_PATTERN = /^[a-z0-9._]+$/
 
 export function SignupPage() {
   const navigate = useNavigate()
+  const { signUp } = useSession()
   const { isAvailableUsername } = useAppData()
 
   const [displayName, setDisplayName] = useState('')
@@ -29,6 +29,7 @@ export function SignupPage() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [errors, setErrors] = useState<Errors>({})
+  const [formError, setFormError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
   function validate(): boolean {
@@ -63,16 +64,21 @@ export function SignupPage() {
     return Object.keys(next).length === 0
   }
 
-  function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault()
+    setFormError(null)
     if (!validate()) return
 
-    // Phase 3 will create the account in Supabase here.
     setSubmitting(true)
-    window.setTimeout(() => {
+    try {
+      await signUp({ displayName, username, email, password })
+      navigate('/chats', { replace: true })
+    } catch (error) {
+      setFormError(
+        error instanceof Error ? error.message : 'We could not create your account. Try again.',
+      )
       setSubmitting(false)
-      navigate('/chats')
-    }, 500)
+    }
   }
 
   return (
@@ -82,13 +88,22 @@ export function SignupPage() {
       footer={
         <>
           Already have an account?{' '}
-          <Link to="/login" className="font-medium text-primary hover:underline">
+          <Link to="/login" className="inline-block py-1.5 font-medium text-primary hover:underline">
             Sign in
           </Link>
         </>
       }
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+        {formError ? (
+          <p
+            role="alert"
+            className="rounded-lg border border-danger/35 bg-danger-soft px-3 py-2 text-[13px] leading-relaxed text-danger"
+          >
+            {formError}
+          </p>
+        ) : null}
+
         <Input
           label="Display name"
           name="displayName"
