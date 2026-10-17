@@ -1,0 +1,340 @@
+{
+  "version": 1,
+  "project": {
+    "name": "krapp-app",
+    "productType": null,
+    "stack": [
+      "react",
+      "tailwind-v4",
+      "vite"
+    ]
+  },
+  "sources": {
+    "tokens": [
+      "src/index.css"
+    ],
+    "components": [
+      "src/components/ui"
+    ],
+    "assets": [
+      "src/assets"
+    ],
+    "instructions": []
+  },
+  "design": {
+    "colorMode": "light-and-dark",
+    "colors": {
+      "--text-muted": {
+        "value": "#9c9e96",
+        "source": "src/index.css"
+      },
+      "--primary": {
+        "value": "#2fb0aa",
+        "source": "src/index.css"
+      },
+      "--primary-hover": {
+        "value": "#3bbdb7",
+        "source": "src/index.css"
+      },
+      "--primary-active": {
+        "value": "#279a95",
+        "source": "src/index.css"
+      },
+      "--primary-contrast": {
+        "value": "#062524",
+        "source": "src/index.css"
+      },
+      "--primary-soft": {
+        "value": "rgba(47, 176, 170, 0.13)",
+        "source": "src/index.css"
+      },
+      "--primary-ring": {
+        "value": "rgba(47, 176, 170, 0.45)",
+        "source": "src/index.css"
+      },
+      "--border": {
+        "value": "rgba(236, 237, 234, 0.1)",
+        "source": "src/index.css"
+      },
+      "--border-strong": {
+        "value": "rgba(236, 237, 234, 0.18)",
+        "source": "src/index.css"
+      },
+      "--ring": {
+        "value": "rgba(47, 176, 170, 0.5)",
+        "source": "src/index.css"
+      },
+      "--panel-muted": {
+        "value": "#a4a69e",
+        "source": "src/index.css"
+      },
+      "--color-bg": {
+        "value": "var(--bg)",
+        "source": "src/index.css"
+      },
+      "--color-surface": {
+        "value": "var(--surface)",
+        "source": "src/index.css"
+      },
+      "--color-surface-2": {
+        "value": "var(--surface-2)",
+        "source": "src/index.css"
+      },
+      "--color-surface-3": {
+        "value": "var(--surface-3)",
+        "source": "src/index.css"
+      },
+      "--color-text": {
+        "value": "var(--text)",
+        "source": "src/index.css"
+      },
+      "--color-muted": {
+        "value": "var(--text-muted)",
+        "source": "src/index.css"
+      },
+      "--color-faint": {
+        "value": "var(--text-faint)",
+        "source": "src/index.css"
+      },
+      "--color-primary": {
+        "value": "var(--primary)",
+        "source": "src/index.css"
+      },
+      "--color-primary-hover": {
+        "value": "var(--primary-hover)",
+        "source": "src/index.css"
+      },
+      "--color-primary-active": {
+        "value": "var(--primary-active)",
+        "source": "src/index.css"
+      },
+      "--color-primary-contrast": {
+        "value": "var(--primary-contrast)",
+        "source": "src/index.css"
+      },
+      "--color-primary-soft": {
+        "value": "var(--primary-soft)",
+        "source": "src/index.css"
+      },
+      "--color-danger": {
+        "value": "var(--danger)",
+        "source": "src/index.css"
+      },
+      "--color-danger-hover": {
+        "value": "var(--danger-hover)",
+        "source": "src/index.css"
+      },
+      "--color-danger-soft": {
+        "value": "var(--danger-soft)",
+        "source": "src/index.css"
+      },
+      "--color-warning": {
+        "value": "var(--warning)",
+        "source": "src/index.css"
+      },
+      "--color-warning-soft": {
+        "value": "var(--warning-soft)",
+        "source": "src/index.css"
+      },
+      "--color-success": {
+        "value": "var(--success)",
+        "source": "src/index.css"
+      },
+      "--color-success-soft": {
+        "value": "var(--success-soft)",
+        "source": "src/index.css"
+      },
+      "--color-online": {
+        "value": "var(--online)",
+        "source": "src/index.css"
+      },
+      "--color-line": {
+        "value": "var(--border)",
+        "source": "src/index.css"
+      },
+      "--color-line-strong": {
+        "value": "var(--border-strong)",
+        "source": "src/index.css"
+      },
+      "--color-panel": {
+        "value": "var(--panel)",
+        "source": "src/index.css"
+      },
+      "--color-panel-text": {
+        "value": "var(--panel-text)",
+        "source": "src/index.css"
+      },
+      "--color-panel-muted": {
+        "value": "var(--panel-muted)",
+        "source": "src/index.css"
+      },
+      "--color-bubble-in": {
+        "value": "var(--bubble-in)",
+        "source": "src/index.css"
+      },
+      "--color-bubble-in-text": {
+        "value": "var(--bubble-in-text)",
+        "source": "src/index.css"
+      },
+      "--color-bubble-out": {
+        "value": "var(--bubble-out)",
+        "source": "src/index.css"
+      },
+      "--color-bubble-out-text": {
+        "value": "var(--bubble-out-text)",
+        "source": "src/index.css"
+      },
+      "--color-tick-seen": {
+        "value": "var(--tick-seen)",
+        "source": "src/index.css"
+      }
+    },
+    "typography": {
+      "--text": {
+        "value": "#ecedea",
+        "source": "src/index.css"
+      },
+      "--text-faint": {
+        "value": "#949690",
+        "source": "src/index.css"
+      },
+      "--bubble-in-text": {
+        "value": "#ecedea",
+        "source": "src/index.css"
+      },
+      "--bubble-out-text": {
+        "value": "#ffffff",
+        "source": "src/index.css"
+      },
+      "--panel-text": {
+        "value": "#f2f3f0",
+        "source": "src/index.css"
+      },
+      "--font-sans": {
+        "value": "'Fira Sans', ui-sans-serif, system-ui, sans-serif",
+        "source": "src/index.css"
+      }
+    },
+    "spacing": {},
+    "radius": {},
+    "shadows": {
+      "--shadow-pop": {
+        "value": "0 16px 44px -16px rgba(0, 0, 0, 0.6), 0 4px 12px -6px rgba(0, 0, 0, 0.4)",
+        "source": "src/index.css"
+      }
+    },
+    "motion": {
+      "--ease-out": {
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "source": "src/index.css"
+      }
+    },
+    "density": "unknown"
+  },
+  "components": {
+    "installed": [
+      "Avatar",
+      "Badge",
+      "Button",
+      "EmptyState",
+      "IconButton",
+      "Input",
+      "Modal",
+      "Skeleton",
+      "Switch",
+      "Tabs"
+    ],
+    "preferredPrimitives": [],
+    "patterns": []
+  },
+  "constraints": {
+    "must": [
+      "One accent only: deep petrol teal (light #0E7C7F, dark #2FB0AA). Everything else neutral.",
+      "Flat surfaces: hairlines (--border / --border-strong) for definition; shadows only via --shadow-pop on modals and tooltips.",
+      "Fira Sans everywhere; times use tabular-nums.",
+      "Text contrast >= 4.5:1 for all text tokens on every surface, in both themes.",
+      "Radii: 6px controls, 8px inputs/buttons, 12px panels/modals; bubbles 12px with one 4px tail corner.",
+      "Icons from lucide-react only (no emoji as UI icons); green reserved for the presence dot."
+    ],
+    "avoid": [
+      "Gradients of any kind (background-image: linear/radial-gradient).",
+      "Glassmorphism: backdrop-filter / backdrop-blur.",
+      "Glow effects, colourful blur blobs, dot textures.",
+      "Neumorphism (inset/raised shadow pairs) and heavy drop shadows.",
+      "Pill-shaped buttons or segmented pill controls (tabs are underline-style; theme picker is a checkmark list).",
+      "Stacked rounded cards; prefer grouped panels with hairline dividers.",
+      "Purple/violet, coral, neon or multi-accent palettes."
+    ]
+  },
+  "decisions": [
+    {
+      "id": "quiet-ink-redesign",
+      "decision": "Replaced the violet/coral neumorphic system with 'Quiet Ink': neutral paper/charcoal surfaces, hairlines instead of shadows, strong type hierarchy, and one petrol-teal accent. The old look read as generic AI-generated design (gradients, glows, glass, blur blobs).",
+      "createdAt": "2026-10-17T16:00:00.000Z",
+      "source": "src/index.css"
+    },
+    {
+      "id": "single-petrol-accent",
+      "decision": "One accent colour only - deep petrol teal (#0E7C7F light / #2FB0AA dark). The coral --accent token was removed and all bg-accent/text-accent usages now use primary. Distinctive without copying WhatsApp green or Telegram blue.",
+      "createdAt": "2026-10-17T16:00:00.000Z",
+      "source": "src/index.css"
+    },
+    {
+      "id": "flat-surfaces-hairlines",
+      "decision": "Controls and panels are flat: solid fills or hairline borders; --shadow-pop is reserved for modals and tooltips. Bubbles are solid teal (outgoing) and white/dark with a hairline (incoming), 12px radius with a 4px tail corner.",
+      "createdAt": "2026-10-17T16:00:00.000Z",
+      "source": "src/index.css"
+    },
+    {
+      "id": "dense-messaging-lists",
+      "decision": "Chat and contact lists use dense 2-line rows with hairline separators, an accent tint for the active chat, tabular timestamps and a CountBadge for unread - reads like a daily messaging product, not marketing UI.",
+      "createdAt": "2026-10-17T16:00:00.000Z",
+      "source": "src/components/chat/ChatListItem.tsx"
+    },
+    {
+      "id": "profile-grouped-settings",
+      "decision": "Profile dropped the gradient hero and 3-up stats row in favour of one grouped settings panel (identity, account, appearance, about, danger). Appearance is a checkmark list, not a segmented pill control.",
+      "createdAt": "2026-10-17T16:00:00.000Z",
+      "source": "src/pages/app/ProfilePage.tsx"
+    },
+    {
+      "id": "ink-auth-panel",
+      "decision": "The auth screen uses a solid ink brand column (--panel) with no gradient or blur, and the auth inputs have no leading icons - restrained and editorial, and the first field keeps autofocus for keyboard users.",
+      "createdAt": "2026-10-17T16:00:00.000Z",
+      "source": "src/pages/auth/AuthLayout.tsx"
+    },
+    {
+      "id": "programmatic-ui-audit",
+      "decision": "UI verification includes a headless-Chrome CDP audit over 14 routes x 2 themes asserting zero gradients/backdrop-filter, no horizontal overflow or offscreen elements, correct accent per theme, and text contrast >= 4.5:1. Used because screenshots cannot be inspected by the agent.",
+      "createdAt": "2026-10-17T16:00:00.000Z",
+      "source": "docs/DOCUMENTATION.md"
+    }
+  ],
+  "evidence": [
+    {
+      "fact": "components.installed",
+      "source": "src/components/ui"
+    },
+    {
+      "fact": "design.colorMode:light-and-dark",
+      "source": "src/index.css"
+    },
+    {
+      "fact": "design.tokens",
+      "source": "src/index.css"
+    },
+    {
+      "fact": "project.stack:react",
+      "source": "package.json"
+    },
+    {
+      "fact": "project.stack:tailwind-v4",
+      "source": "package.json"
+    },
+    {
+      "fact": "project.stack:vite",
+      "source": "package.json"
+    }
+  ],
+  "generatedAt": "2026-10-17T15:59:14.952Z"
+}

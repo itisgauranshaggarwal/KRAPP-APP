@@ -29,28 +29,28 @@ export function BottomNav({ className }: { className?: string }) {
                 <span
                   aria-hidden
                   className={cn(
-                    'absolute top-0 h-1 w-9 rounded-b-full transition-all duration-200',
-                    isActive ? 'brand-gradient opacity-100' : 'opacity-0',
+                    'absolute top-0 h-0.5 w-7 rounded-b-full transition-colors duration-150',
+                    isActive ? 'bg-primary' : 'bg-transparent',
                   )}
                 />
                 <span
                   className={cn(
-                    'relative inline-flex size-10 items-center justify-center rounded-xl transition-all duration-200',
+                    'relative inline-flex size-9 items-center justify-center rounded-lg transition-colors duration-150',
                     isActive
                       ? 'bg-primary-soft text-primary'
-                      : 'text-muted active:scale-90 active:bg-surface-2',
+                      : 'text-muted active:bg-surface-3',
                   )}
                 >
-                  <Icon className={cn('transition-transform duration-200', isActive && 'scale-105')} />
+                  <Icon className="size-5" />
                   {count > 0 ? (
-                    <span className="absolute -top-0.5 -right-0.5 inline-flex min-w-[18px] items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold text-white ring-2 ring-[var(--bg)]">
+                    <span className="absolute -top-1 -right-1 inline-flex min-w-[18px] items-center justify-center rounded-md bg-primary px-1 text-[10px] leading-4 font-semibold text-primary-contrast ring-2 ring-[var(--surface)]">
                       {count > 99 ? '99+' : count}
                     </span>
                   ) : null}
                 </span>
                 <span
                   className={cn(
-                    'transition-colors duration-200',
+                    'transition-colors duration-150',
                     isActive ? 'font-semibold text-primary' : 'text-muted',
                   )}
                 >

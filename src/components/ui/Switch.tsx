@@ -10,7 +10,7 @@ export interface SwitchProps {
   className?: string
 }
 
-/** Neumorphic toggle: inset track, raised knob (raised -> inset when off). */
+/** Flat toggle: neutral track, solid accent knob when on. */
 export function Switch({ checked, onChange, label, disabled, className }: SwitchProps) {
   const id = useId()
 
@@ -25,18 +25,18 @@ export function Switch({ checked, onChange, label, disabled, className }: Switch
         disabled={disabled}
         onClick={() => onChange(!checked)}
         className={cn(
-          'neu-inset relative inline-flex h-7 w-12 shrink-0 items-center rounded-full p-1',
-          'transition-colors duration-200',
-          'disabled:pointer-events-none disabled:opacity-55',
-          checked && 'bg-primary-soft',
+          'relative inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5',
+          'transition-colors duration-150',
+          'disabled:pointer-events-none disabled:opacity-50',
+          checked ? 'bg-primary' : 'bg-surface-3 border border-line-strong',
         )}
       >
         <span
           className={cn(
-            'inline-block size-5 rounded-full transition-transform duration-200',
+            'inline-block size-5 rounded-full transition-transform duration-150',
             checked
-              ? 'translate-x-5 brand-gradient'
-              : 'translate-x-0 bg-surface shadow-[2px_2px_4px_var(--shadow-dark),-1px_-1px_3px_var(--shadow-light)]',
+              ? 'translate-x-5 bg-white shadow-none'
+              : 'translate-x-0 bg-white border border-line-strong',
           )}
         />
       </button>

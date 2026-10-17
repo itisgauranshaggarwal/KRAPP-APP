@@ -10,16 +10,16 @@ const sizes: Record<Size, string> = {
   xs: 'size-7 text-[10px]',
   sm: 'size-9 text-xs',
   md: 'size-11 text-sm',
-  lg: 'size-14 text-base',
-  xl: 'size-24 text-2xl',
+  lg: 'size-12 text-base',
+  xl: 'size-20 text-xl',
 }
 
 const iconSizes: Record<Size, string> = {
   xs: 'size-3.5',
   sm: 'size-4.5',
-  md: 'size-5.5',
-  lg: 'size-7',
-  xl: 'size-12',
+  md: 'size-5',
+  lg: 'size-5.5',
+  xl: 'size-9',
 }
 
 export interface AvatarProps {
@@ -49,8 +49,9 @@ export function Avatar({
     <span className={cn('relative inline-flex shrink-0', className)}>
       <span
         className={cn(
-          'neu-inset-sm inline-flex items-center justify-center overflow-hidden rounded-full',
-          'font-semibold text-primary/55',
+          'inline-flex items-center justify-center overflow-hidden rounded-full',
+          'bg-surface-3 border border-line text-muted',
+          'font-semibold',
           sizes[size],
         )}
       >
@@ -65,7 +66,7 @@ export function Avatar({
         ) : fallback === 'initials' ? (
           <span aria-hidden>{toInitials(username || name)}</span>
         ) : (
-          <UserRound className={cn('text-primary/50', iconSizes[size])} aria-hidden />
+          <UserRound className={cn('text-faint', iconSizes[size])} aria-hidden />
         )}
       </span>
 
@@ -73,8 +74,8 @@ export function Avatar({
         <span
           className={cn(
             'absolute right-0 bottom-0 rounded-full bg-online ring-2',
-            'ring-[var(--bg)]',
-            size === 'lg' || size === 'xl' ? 'size-3.5' : 'size-2.5',
+            'ring-[var(--surface)]',
+            size === 'xl' ? 'size-4' : size === 'lg' ? 'size-3' : 'size-2.5',
           )}
           title="online"
         >

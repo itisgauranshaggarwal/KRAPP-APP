@@ -13,10 +13,10 @@ export interface TabsProps {
   className?: string
 }
 
-/** Segmented neumorphic control (inset track, active pill raised). */
+/** Underline tabs — text-led, no container chrome. */
 export function Tabs({ items, value, onChange, className }: TabsProps) {
   return (
-    <div role="tablist" className={cn('neu-inset flex gap-1 rounded-xl p-1', className)}>
+    <div role="tablist" className={cn('flex gap-5 border-b border-line', className)}>
       {items.map((item) => {
         const active = item.value === value
         return (
@@ -27,14 +27,21 @@ export function Tabs({ items, value, onChange, className }: TabsProps) {
             aria-selected={active}
             onClick={() => onChange(item.value)}
             className={cn(
-              'flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold',
-              'transition-[box-shadow,color] duration-150',
-              active ? 'neu-raised-sm text-primary' : 'text-muted hover:text-text',
+              'relative -mb-px flex items-center gap-1.5 pb-2.5 text-sm',
+              'transition-colors duration-100',
+              active
+                ? 'border-b-2 border-primary font-semibold text-text'
+                : 'border-b-2 border-transparent font-medium text-muted hover:text-text',
             )}
           >
             {item.label}
             {typeof item.count === 'number' && item.count > 0 ? (
-              <span className="rounded-full bg-primary-soft px-1.5 text-[11px] font-semibold text-primary">
+              <span
+                className={cn(
+                  'rounded-md px-1 py-px text-[11px] leading-4 font-semibold',
+                  active ? 'bg-primary-soft text-primary' : 'bg-surface-3 text-muted',
+                )}
+              >
                 {item.count}
               </span>
             ) : null}

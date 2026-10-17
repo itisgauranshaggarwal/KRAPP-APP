@@ -6,7 +6,7 @@ This document is the single source of truth for session continuity. If you switc
 
 **Current Phase:** Phase 1 - Project Setup & UI Foundation (in progress)
 
-**Status:** Project scaffolded; full mock UI built (auth, chats, requests, contacts, profile), neumorphic light/dark theme, routing. Build verification pending (npm install was slow/interrupted on this machine).
+**Status:** Project scaffolded; full mock UI built (auth, chats, requests, contacts, profile) on the "Quiet Ink" design system (neutral surfaces + single petrol accent, light/dark), routing. `tsc -b`, `npm run build`, `npm run lint` and a headless-Chrome UI audit all pass.
 
 ## Table of Contents
 
@@ -35,7 +35,7 @@ This document is the single source of truth for session continuity. If you switc
 ## 1. Project Overview
 
 **Name:** KRAPP APP  
-**Vibe:** WhatsApp-inspired, minimal, neumorphic, light/dark mode.  
+**Vibe:** WhatsApp-inspired, minimal, flat and neutral with a single accent, light/dark mode.  
 **Target:** Teens (11-17) primarily, but open to anyone. Hobby project, not for professional work.  
 **Focus:** 1:1 chat with friends via username-based invites.  
 **Constraints:** Free tiers only. Keep storage minimal (last 5 msgs per chat; media deleted daily regardless).
@@ -51,7 +51,7 @@ See PRD.md Section 2. Core goals include working MVP with auth, invites, realtim
 - **Styling:** Tailwind CSS v4 (CSS-first `@theme`) + CSS variables for light/dark theming
 - **Fonts:** Fira Sans, self-hosted via `@fontsource/fira-sans`
 - **Icons:** `lucide-react`
-- **Components:** **Custom** neumorphic components (no shadcn). `cn()` helper = `clsx` + `tailwind-merge`
+- **Components:** **Custom** flat components (no shadcn). `cn()` helper = `clsx` + `tailwind-merge`
 - **Routing:** `react-router-dom` v7 (`BrowserRouter`, nested routes)
 - **Forms/Validation:** Manual validation for Phase 1; `react-hook-form` + `zod` deferred to Phase 2 if needed
 - **State Management:** React Context (`ThemeProvider`, `AppDataProvider`) — Supabase-backed later
@@ -80,30 +80,33 @@ High-level (to be detailed during implementation):
 
 ## 5. Design System
 
-**Style:** Neumorphism (restrained — crisp shadows, tight radii, real hierarchy)  
-**Brand:** "Grape" violet `#7C5CFF` + "Sunset" coral accent `#FF5C7F` on lavender-grey surfaces (deliberately not WhatsApp green / Telegram blue / Discord blurple / Snapchat yellow)  
+**Style:** "Quiet Ink" — flat, editorial, product-grade. Neutral surfaces, hairlines, strong type hierarchy; no gradients, glows, glassmorphism or neumorphism.  
+**Accent:** a single deep petrol teal — light `#0E7C7F` (solid fills, white text) / dark `#2FB0AA` (text, icons, fills with dark ink). Everything else is neutral.  
 **Modes:** Light / Dark / System (class-based `.dark` on `<html>`, persisted in `localStorage['krapp.theme']`)  
-**Typography:** Fira Sans (self-hosted)  
-**Layout:** desktop — icon rail + list column + chat pane; mobile — list ⇄ full-screen chat + bottom nav  
-**Inspiration:** Instagram (profile hero, story ring, stats), Telegram/WhatsApp (chat list, composer), playful gradient identity for a younger audience.
+**Typography:** Fira Sans (self-hosted); dense-but-legible scale — 15px list names, 14px body, 17px page titles, 11–13px metadata (all `tabular-nums` for times).  
+**Layout:** desktop — icon rail (76px) + list column (380–420px) + chat pane; mobile — list ⇄ full-screen chat + bottom nav.  
+**Inspiration:** WhatsApp/Telegram *usability* (dense list rows, hairline separators, ticks, day separators, grouped settings) — no visual copying.
 
-### Brand tokens
-- Brand ramp: `--brand-1 #7c5cff`, `--brand-2 #a95cff`, `--brand-3 #ff5c7f` (used by `brand-gradient`)
-- Surfaces (light): `--bg/--surface #ebe9f4`, `--surface-2 #e2dff0`, `--surface-3 #d8d4e9`; (dark): `#161521`, `#201e2e`, `#282539`
-- Text: `--text`, `--text-muted`, `--text-faint` (contrast-tuned per mode)
-- Semantic: `--primary` (light `#7c5cff` / dark `#8b6cff`), `--accent` coral, `--success`, `--online` mint, `--danger`, `--warning`
-- Neumorphic pair: `--shadow-light` / `--shadow-dark` (inverted per theme)
-- Bubbles: `--bubble-in` (near-white in light, raised panel in dark), `--bubble-out` (violet gradient), `--bubble-in-text`, `--bubble-out-text`
-- Radii: `--radius-neu 1rem`, `--radius-app 0.875rem`
-- Motion: `--ease-out`, `--ease-spring`
+### Design tokens (`src/index.css`)
+- Surfaces (light): `--bg #F3F3F1` (paper), `--surface #FFFFFF`, `--surface-2 #F7F7F5`, `--surface-3 #EAEAE7`; (dark): `#121312`, `#1A1B1A`, `#212221`, `#2B2C2A`
+- Text: `--text` (`#1A1B19` / `#ECEDEA`), `--text-muted` (`#54554E` / `#9C9E96`), `--text-faint` (`#65665E` / `#949690`) — all ≥4.5:1 on every surface (audited)
+- Accent: `--primary`, `--primary-hover`, `--primary-active`, `--primary-contrast`, `--primary-soft` (tint for active rows), `--primary-ring`
+- Semantic: `--danger`, `--warning`, `--success`, `--online` (green used *only* for the presence dot)
+- Lines: `--border` (10% ink), `--border-strong` (17%) — flat definition instead of shadows
+- Ink panel (auth brand column): `--panel`, `--panel-text`, `--panel-muted`
+- Bubbles: `--bubble-in` (white + hairline in light, `#232423` in dark), `--bubble-out` (solid teal, both modes), `--bubble-in-text`, `--bubble-out-text`, `--tick-seen`
+- Elevation: `--shadow-pop` only — modals, tooltips, nothing else
+- Motion: `--ease-out`; `animate-rise` (180ms, new messages) and `animate-fade`; `typing-bounce` keyframes. All disabled under `prefers-reduced-motion`.
 
-Tailwind v4 `@theme inline` maps these to utilities (`bg-surface`, `text-muted`, `bg-bubble-in`, `text-primary-contrast`, …).
+Tailwind v4 `@theme inline` maps these to utilities (`bg-surface`, `text-muted`, `bg-bubble-in`, `text-primary-contrast`, `text-tick-seen`, …).
 
-### Utility layer (`@utility` in `src/index.css`)
-- Neumorphic: `neu-raised`, `neu-raised-sm`, `neu-raised-lg`, `neu-inset`, `neu-inset-sm`, `neu-flat`, `neu-press` (raised→inset on `:active`), `neu-divider`
-- Brand: `brand-gradient`, `brand-gradient-soft`, `text-gradient`, `glow-brand`
-- Misc: `app-texture` (dot pattern), `hairline` (inset 1px ring), `scroll-soft`
-- Animations: `animate-rise`, `animate-fade`, `animate-pop`, `typing-bounce` keyframes (disabled under `prefers-reduced-motion`)
+### Rules (enforced by review)
+- No `gradient`, `backdrop-blur`, glows or heavy shadows anywhere (asserted programmatically).
+- Radii: `rounded-md` (6px) controls, `rounded-lg` (8px) inputs/buttons, `rounded-xl` (12px) panels/modals; bubbles `rounded-xl` with a 4px tail corner.
+- Controls are flat: solid fills or hairline borders; primary = solid accent, secondary = surface + strong hairline, ghost = text-only, danger = solid red.
+- Tabs are underline-style; theme choice is a grouped list with checkmarks (no segmented pills).
+- Avatar fallback = neutral grey + silhouette; online dot only in green.
+- `scroll-soft`, global `:focus-visible` ring, and a pre-paint theme script in `index.html` (`theme-color` matches the new palette).
 
 ## 6. Database Schema
 
@@ -212,12 +215,12 @@ src/
 | Contacts UI | ✅ Done | Search, list, remove |
 | Requests UI | ✅ Done | Received/Sent tabs, accept/reject |
 | Chat UI | ✅ Done | Bubbles, day separators, input, placeholder pane |
-| Neumorphic design | ✅ Done | Tokens + utilities in index.css |
+| "Quiet Ink" design system | ✅ Done | Neutral surfaces + single petrol accent; tokens in index.css |
 | Light/Dark mode | ✅ Done | light/dark/system + no-flash script |
 | New contact dialog | ✅ Done | Username search + single intro message |
-| Profile UI | ✅ Done | Hero + stats + edit (incl. **email** + bio), theme, delete account |
+| Profile UI | ✅ Done | Grouped settings panel (identity, account, appearance, about, danger) |
 | Safety notice | ✅ Done | Auth screens + Profile |
-| Brand identity | ✅ Done | "Grape" violet + "Sunset" coral (own system, not WhatsApp green) |
+| Brand identity | ✅ Done | Own "Quiet Ink" system (neutral + petrol teal), not a WhatsApp-green clone |
 | Supabase integration | ⏳ Not started | Phase 3 |
 | Auth (username+password) | ⏳ Not started | Mock nav only |
 | Contacts/invites (real) | ⏳ Not started | Mock state only |
@@ -261,14 +264,25 @@ Use this section to record every significant decision with rationale, date, and 
 | 2026-10-17 | **Email is now editable** (reverses earlier "immutable" rule) | User requested it | Signup warning removed; Profile has an editable email field; `updateProfile` accepts `email`; DB `email` must no longer be immutable (update PRD 6.x) |
 | 2026-10-17 | Added editable `bio` + profile stats row | Profile looked sparse/unfinished | `User.bio` already existed; stats derived from contacts/chats/requests |
 | 2026-10-17 | Auth screens get a two-column desktop layout (brand panel + form) | Make first-run feel designed, not a plain card | `AuthLayout` responsive: panel `lg+`, form card always |
+| 2026-10-17 | **Full UI redesign — "Quiet Ink"** replaces the violet/coral neumorphic system | User asked to kill the "AI slop" look (gradients, glows, glass, blobs) and produce an authentic messaging product | `src/index.css` rewritten (neutral tokens + one petrol accent); all `neu-*`/`brand-gradient`/`glow-brand`/`app-texture`/`hairline`/`text-gradient` utilities deleted; ~25 components restyled |
+| 2026-10-17 | One accent only: deep petrol teal (`#0E7C7F` light / `#2FB0AA` dark); `--accent` coral removed | "ONE carefully chosen accent" per requirements; teal is distinctive vs WhatsApp green / Telegram blue | `bg-accent`/`text-accent` usages replaced with `primary`; single-colour system |
+| 2026-10-17 | Flat surfaces with hairlines; shadows only for modals/tooltips (`--shadow-pop`) | Removes neumorphism/glassmorphism tells; clearer hierarchy | `Switch`, `Modal`, `Input`, `Skeleton`, `Avatar`, chat list rows rewritten |
+| 2026-10-17 | Underline `Tabs`; theme picker is a grouped list with checkmarks (was a segmented pill) | Avoid pill/segmented chrome; reads as settings, not a landing page | `Tabs` primitive + `ProfilePage` appearance section |
+| 2026-10-17 | Chat list rows separated by hairlines and an accent tint for the active chat; `CountBadge` for unread | Information-dense but uncluttered lists | `ChatListItem`, `ChatList` |
+| 2026-10-17 | Auth screen first field no longer has a leading icon; brand column is a solid ink panel (`--panel`) | Icons-in-inputs read as generic AI UI; ink panel is restrained and editorial | `LoginPage`, `SignupPage`, `AuthLayout` |
+| 2026-10-17 | Profile hero/stats row removed in favour of one grouped settings panel | "Avoid excessive rounded cards"; settings should feel like a product | `ProfilePage` rewritten (identity → account → appearance → about → danger) |
+| 2026-10-17 | `avatarColor()` (purple palette) deleted — it was unused | Dead code, and it referenced the old brand | `lib/utils.ts` keeps only `cn` + `initials` |
+| 2026-10-17 | Verification is programmatic too: headless-Chrome CDP audit asserts no gradients/backdrop-blur/overflow, correct accent per theme, and text contrast ≥4.5:1 | Compensates for not being able to view screenshots directly | `faint` text tokens darkened; audit script run over 14 routes × 2 themes |
 
 ## 16. Known Issues & Tech Debt
 
 - **npm on this machine is slow / flaky.** A first `npm install` was interrupted by a tool timeout, leaving `node_modules` partially extracted and `package.json` missing 5 deps (react-router-dom, lucide-react, clsx, tailwind-merge, @fontsource/fira-sans). Reinstalled. Also had to extract `lucide-react` from its npm tarball manually once because its `.d.ts` was missing from a corrupted extraction. If a package's types appear missing, verify against `npm pack <pkg>@<ver>`.
 - **Verified:** `npm run build` (tsc + vite) ✅, `npm run lint` ✅ (warnings only), dev server smoke-tested at `http://localhost:5173` (all routes/modules compile).
-- **Bundle size:** main JS ~935 kB (~254 kB gzip) — larger than ideal. Address with route-level code splitting in Phase 5.
+- **Bundle size:** main JS ~941 kB (~254 kB gzip) — larger than ideal. Address with route-level code splitting in Phase 5. CSS is ~41 kB (down from ~54 kB after the redesign).
 - `Skeleton`/`SkeletonRows` exist but are not yet used by pages (Phase 2 loading states).
 - `Modal` focus management is basic (focus-in + Escape close); full focus trap is Phase 2 (a11y).
+- `21st` CLI is not signed in on this machine, so catalog search/generate is unavailable; `npx 21st review <paths>` works (deterministic local rules) and is part of the verification loop.
+- Screenshot tooling: headless Chrome + a small CDP script is used for UI audits (temp dir, not committed). This agent cannot view images, so visual verification relies on the CDP audit + the user's live dev server.
 - No Prettier config yet.
 - `AppDataProvider` keeps all state in memory; nothing persists across reloads (expected pre-Supabase).
 
@@ -307,6 +321,17 @@ Use this section to record every significant decision with rationale, date, and 
 - Docs updated (design system, decisions, features, PRD/TODO/SESSION_RESUME for editable email).
 - Verified: `tsc -b` ✅, `npm run build` ✅, `npm run lint` ✅ (warnings only), dev-server smoke test ✅.
 - Next: begin Phase 2 (route guards, form validation, loading/empty states, a11y focus trap, code splitting).
+
+**Session 4 (2026-10-17) — Full UI redesign ("Quiet Ink")**
+- **Removed the violet/coral neumorphic system entirely.** Rewrote `src/index.css`: warm-paper neutrals (`#F3F3F1` / `#121312`), near-black ink text, **one** accent (petrol teal `#0E7C7F` light / `#2FB0AA` dark), hairlines instead of shadows, ink `--panel` tokens. Deleted every `neu-*`, `brand-gradient*`, `glow-brand`, `text-gradient`, `app-texture`, `hairline` utility plus the `accent` (coral) colour token; animations reduced to `rise`/`fade`/`typing-bounce`.
+- **Primitives:** flat `Button` (primary/secondary/ghost/danger, 6–8px radii), `IconButton`, `Input` (bordered field, accent focus ring), `Badge`/`CountBadge`, `Switch`, `Modal` (single `--shadow-pop`), `EmptyState`, `Skeleton`, `Avatar` (grey silhouette, green dot only).
+- **Layout:** `AppShell` atmosphere blobs removed; `IconRail` (76px, accent-soft active square, flat tooltips), `BottomNav` (2px accent top indicator, no gradient), `PageHeader` solid (no backdrop blur, 17px title).
+- **Chat:** dense rows with hairline separators + accent-tinted active row (`ChatListItem`), `ChatsScreen` list column no longer glassy, `MessageBubble` flat (solid teal outgoing + white hairlines incoming, 4px tail), day separators as bordered chips, composer as a bordered field with accent focus ring, ticks re-tuned light-on-teal with `--tick-seen`.
+- **Pages:** `RequestsPage` — one grouped panel with divided rows (was stacked raised cards); `ContactsPage` — same panel treatment, no texture; `ProfilePage` — hero/stats removed, one settings panel (identity → account → appearance → about → danger), theme picker as checkmark rows; `AuthLayout` — flat ink brand column (no gradient/blobs), auth inputs lose leading icons; `NotFoundPage` unchanged (new EmptyState).
+- Removed dead `avatarColor()` purple palette from `lib/utils.ts`; `index.html` theme-colors → `#F3F3F1` / `#121312`.
+- **Verification:** `tsc -b` ✅, `npm run build` ✅ (CSS 54 kB → 41 kB), `npm run lint` ✅ (3 pre-existing warnings). `npx 21st review src`: all **errors fixed** (non-semantic trigger div → button; input outline now paired with a focus ring); warnings are intentional (autofocus on first auth field, `disabled:pointer-events-none`).
+- **Programmatic UI audit** (headless Chrome via CDP, 14 routes × light/dark, 1440×900 + 390×844, script in the temp dir): no horizontal overflow, no offscreen elements, **zero** gradients, **zero** `backdrop-filter`, Fira Sans applied, accent resolves correctly per theme, and muted/faint text contrast ≥4.66:1 everywhere.
+- Next: Phase 2 (route guards, validation, loading/empty states, focus trap, code splitting).
 
 ## 18. Setup Instructions
 

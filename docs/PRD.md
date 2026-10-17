@@ -23,7 +23,7 @@
 - Real-time messaging with presence, typing indicators, read/delivered receipts.
 - Respect free tier storage: keep only last 5 messages per chat; delete older messages daily. Delete media files regardless of the 5-message rule.
 - Full responsive behavior (mobile and desktop treated equally).
-- Light/dark mode with neumorphic style.
+- Light/dark mode with a flat, neutral design system (hairlines + a single accent — see DOCUMENTATION.md §5).
 - Account management: editable profile fields (display name, username, email, avatar, bio), delete account option.
 - Safety notice for users.
 
@@ -149,7 +149,7 @@ Account deletion: **Delete Account** option available in profile/settings.
 ## 8. UI/UX Design
 
 ### Style
-- **Neumorphism** (soft UI with subtle shadows, embossed/debossed elements)
+- **Flat / editorial ("Quiet Ink")** — neutral surfaces, hairline borders, strong type hierarchy, **one** accent colour. No gradients, glows, glassmorphism or neumorphism. *(Supersedes the original "neumorphism" direction, which the user asked to drop as too generic.)*
 - **Light/Dark mode** with smooth toggle
 - System preference respected? (or manual toggle) - implement toggle; can default to system preference if easy.
 
@@ -165,7 +165,7 @@ Account deletion: **Delete Account** option available in profile/settings.
 - Clean, modern icon set (Lucide preferred for shadcn compatibility if used).
 
 ### Components
-- Use component library if helpful for consistent neumorphic look (shadcn/ui is acceptable if styled to neumorphism; or build custom). Prioritize good UX over heavy libs.
+- Custom flat UI primitives (no shadcn/ui) keep the look consistent and the bundle small. Prioritize good UX over heavy libs.
 
 ### UX Details
 - Empty states with guidance
@@ -221,7 +221,7 @@ MVP is considered usable when:
 6. Last 5 messages retained per chat; older purged daily (mechanism in place or planned; core logic present)
 7. Media policy defined and storage locations configured (even if media UI comes in Phase 4, foundations ready)
 8. Responsive UI works on mobile and desktop (WhatsApp-like layout)
-9. Light/dark + neumorphic styling present
+9. Light/dark + the flat single-accent design system present
 10. Account deletion available; profile pic visibility rules enforced
 11. Free-tier only deployment possible
 
@@ -235,7 +235,7 @@ MVP is considered usable when:
 - Heavy moderation tools
 
 ## 12. Open Questions (To confirm during implementation if needed)
-- Exact neumorphic color palette (light/dark tokens)
+- Exact colour palette (light/dark tokens)
 - Fira Sans loading (self-host vs Google Fonts)
 - Supabase RLS details for media visibility
 - Daily cleanup implementation (Supabase cron/edge function/worker) - approach
@@ -247,6 +247,6 @@ But the plan is to proceed without guessing - document decisions as made.
 
 ## 13. References
 - WhatsApp UX patterns (layout, presence, states)
-- Neumorphic design principles
+- Flat, single-accent design principles
 - Supabase free tier limits (auth, db, realtime, storage)
 - Cloudflare Pages free tier

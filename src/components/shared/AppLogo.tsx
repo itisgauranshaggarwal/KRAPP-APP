@@ -7,9 +7,9 @@ export interface AppLogoProps {
 }
 
 const marks = {
-  sm: 'size-9 rounded-xl text-lg',
-  md: 'size-11 rounded-2xl text-xl',
-  lg: 'size-16 rounded-[1.35rem] text-3xl',
+  sm: 'size-8 rounded-lg text-base',
+  md: 'size-9 rounded-lg text-lg',
+  lg: 'size-14 rounded-xl text-3xl',
 } as const
 
 const words = {
@@ -18,23 +18,21 @@ const words = {
   lg: 'text-2xl',
 } as const
 
+/** Solid accent square with a white K. Flat — no gradients, no glow. */
 export function AppLogo({ size = 'md', withWordmark = false, className }: AppLogoProps) {
   return (
-    <span className={cn('inline-flex items-center gap-3', className)}>
+    <span className={cn('inline-flex items-center gap-2.5', className)}>
       <span
         className={cn(
-          'brand-gradient glow-brand relative inline-flex items-center justify-center font-bold text-white',
-          'after:absolute after:inset-0 after:rounded-[inherit] after:bg-[linear-gradient(to_bottom,rgba(255,255,255,0.28),transparent)]',
+          'relative inline-flex items-center justify-center rounded-lg bg-primary font-bold text-primary-contrast',
           marks[size],
         )}
         aria-hidden
       >
-        <span className="relative drop-shadow-[0_1px_1px_rgba(0,0,0,0.25)]">K</span>
+        <span className="translate-y-px">K</span>
       </span>
       {withWordmark ? (
-        <span
-          className={cn('font-bold tracking-tight text-text', words[size])}
-        >
+        <span className={cn('font-semibold tracking-[-0.02em] text-text', words[size])}>
           KRAPP
         </span>
       ) : null}

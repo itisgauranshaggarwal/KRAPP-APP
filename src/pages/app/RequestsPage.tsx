@@ -20,58 +20,54 @@ export function RequestsPage() {
   const items = tab === 'received' ? incomingRequests : outgoingRequests
 
   return (
-    <div className="relative flex h-full flex-col">
-      <div aria-hidden className="app-texture pointer-events-none absolute inset-0 opacity-70" />
+    <div className="flex h-full min-h-0 flex-col bg-bg">
+      <PageHeader
+        title="Requests"
+        subtitle={`${contacts.length} ${contacts.length === 1 ? 'contact' : 'contacts'}`}
+        actions={<NewContactDialog />}
+      />
 
-      <div className="relative z-10 flex h-full min-h-0 flex-col">
-        <PageHeader
-          title="Requests"
-          subtitle={`${contacts.length} ${contacts.length === 1 ? 'contact' : 'contacts'}`}
-          actions={<NewContactDialog />}
+      <div className="px-4 pt-4">
+        <Tabs
+          value={tab}
+          onChange={setTab}
+          items={[
+            { value: 'received', label: 'Received', count: incomingRequests.length },
+            { value: 'sent', label: 'Sent', count: outgoingRequests.length },
+          ]}
         />
+      </div>
 
-        <div className="px-4 pt-4">
-          <Tabs
-            value={tab}
-            onChange={setTab}
-            items={[
-              { value: 'received', label: 'Received', count: incomingRequests.length },
-              { value: 'sent', label: 'Sent', count: outgoingRequests.length },
-            ]}
+      <div className="flex-1 overflow-y-auto p-3 scroll-soft">
+        {items.length === 0 ? (
+          <EmptyState
+            icon={tab === 'received' ? Inbox : UserPlus}
+            title={tab === 'received' ? 'No pending requests' : 'No sent requests'}
+            description={
+              tab === 'received'
+                ? 'When someone adds you, their request shows up here.'
+                : 'Requests you send stay here until they are accepted.'
+            }
+            action={tab === 'sent' ? <NewContactDialog /> : undefined}
           />
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-3 scroll-soft">
-          {items.length === 0 ? (
-            <EmptyState
-              icon={tab === 'received' ? Inbox : UserPlus}
-              title={tab === 'received' ? 'No pending requests' : 'No sent requests'}
-              description={
-                tab === 'received'
-                  ? 'When someone adds you, their request shows up here.'
-                  : 'Requests you send stay here until they are accepted.'
-              }
-              action={tab === 'sent' ? <NewContactDialog /> : undefined}
-            />
-          ) : (
-            <ul className="mx-auto flex max-w-2xl flex-col gap-3">
-              {items.map((request) => (
-                <RequestCard
-                  key={request.id}
-                  request={request}
-                  onAccept={() => acceptRequest(request.id)}
-                  onReject={() => rejectRequest(request.id)}
-                />
-              ))}
-            </ul>
-          )}
-        </div>
+        ) : (
+          <ul className="mx-auto flex max-w-2xl flex-col overflow-hidden rounded-xl border border-line bg-surface">
+            {items.map((request) => (
+              <RequestRow
+                key={request.id}
+                request={request}
+                onAccept={() => acceptRequest(request.id)}
+                onReject={() => rejectRequest(request.id)}
+              />
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   )
 }
 
-function RequestCard({
+function RequestRow({
   request,
   onAccept,
   onReject,
@@ -83,7 +79,7 @@ function RequestCard({
   const isReceived = request.direction === 'incoming'
 
   return (
-    <li className="neu-raised animate-rise rounded-2xl p-4">
+    <li className="animate-rise border-b border-line p-4 last:border-b-0">
       <div className="flex items-start gap-3">
         <Avatar
           name={request.user.displayName}
@@ -96,11 +92,13 @@ function RequestCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0">
-              <p className="truncate font-semibold text-text">{request.user.displayName}</p>
+              <p className="truncate text-[15px] leading-5 font-semibold text-text">
+                {request.user.displayName}
+              </p>
               <p className="truncate text-sm text-muted">@{request.user.username}</p>
             </div>
             {isReceived ? (
-              <span className="flex shrink-0 items-center gap-1 text-[11px] text-faint">
+              <span className="flex shrink-0 items-center gap-1 text-[11px] tabular-nums text-faint">
                 <Clock className="size-3.5" aria-hidden />
                 {formatListTime(request.createdAt)}
               </span>
@@ -113,7 +111,7 @@ function RequestCard({
           </div>
 
           {request.introMessage ? (
-            <p className="mt-2.5 rounded-xl rounded-tl-sm border-l-2 border-primary bg-surface-2/80 px-3 py-2 text-sm text-text">
+            <p className="mt-2.5 rounded-r-md rounded-l-none border-l-2 border-primary bg-surface-2 px-3 py-2 text-sm leading-relaxed text-text">
               {request.introMessage}
             </p>
           ) : null}
@@ -136,8 +134,8 @@ function RequestCard({
           <span className="text-xs text-faint">
             Waiting for {request.user.displayName.split(' ')[0]} to accept
           </span>
-          <IconButton label="Request pending" variant="neu" size="sm" disabled>
-            <Clock className="size-4.5" />
+          <IconButton label="Request pending" variant="ghost" size="sm" disabled>
+            <Clock className="size-4" />
           </IconButton>
         </div>
       )}

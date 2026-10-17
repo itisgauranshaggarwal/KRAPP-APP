@@ -14,7 +14,7 @@ import type { User } from '@/types'
 type Step = 'search' | 'confirm' | 'done'
 
 export interface NewContactDialogProps {
-  /** Optional custom trigger; defaults to a neumorphic icon button. */
+  /** Optional custom trigger; defaults to an accent-tinted icon button. */
   trigger?: React.ReactNode
 }
 
@@ -58,9 +58,21 @@ export function NewContactDialog({ trigger }: NewContactDialogProps) {
   return (
     <>
       {trigger ? (
-        <span onClick={() => setOpen(true)}>{trigger}</span>
+        <button
+          type="button"
+          className="contents"
+          onClick={() => setOpen(true)}
+          aria-label="New contact"
+        >
+          {trigger}
+        </button>
       ) : (
-        <IconButton label="New contact" onClick={() => setOpen(true)}>
+        <IconButton
+          label="New contact"
+          variant="ghost"
+          className="hover:bg-primary-soft hover:text-primary"
+          onClick={() => setOpen(true)}
+        >
           <UserPlus className="size-5" />
         </IconButton>
       )}
@@ -118,8 +130,8 @@ export function NewContactDialog({ trigger }: NewContactDialogProps) {
                           setStep('confirm')
                         }}
                         className={cn(
-                          'flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left',
-                          'transition-colors duration-150 hover:bg-surface-2',
+                          'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left',
+                          'transition-colors duration-100 hover:bg-surface-2 active:bg-surface-3',
                         )}
                       >
                         <Avatar name={user.displayName} username={user.username} src={user.avatarUrl} />
@@ -141,7 +153,7 @@ export function NewContactDialog({ trigger }: NewContactDialogProps) {
 
         {step === 'confirm' && selected ? (
           <div className="flex flex-col gap-4">
-            <div className="neu-flat flex items-center gap-3 rounded-xl p-3">
+            <div className="flex items-center gap-3 rounded-lg border border-line bg-surface-2 p-3">
               <Avatar
                 name={selected.displayName}
                 username={selected.username}
@@ -165,9 +177,9 @@ export function NewContactDialog({ trigger }: NewContactDialogProps) {
                 onChange={(e) => setIntro(e.target.value)}
                 placeholder="Hi! We met at…"
                 className={cn(
-                  'neu-inset w-full resize-none rounded-xl px-3.5 py-3 text-sm text-text',
+                  'w-full resize-none rounded-lg border border-line-strong bg-surface px-3.5 py-3 text-sm text-text',
                   'placeholder:text-faint focus-visible:outline-none scroll-soft',
-                  'transition-[outline-color] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--ring)]',
+                  'transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary-soft',
                 )}
               />
               <p className="mt-1.5 text-xs text-faint">

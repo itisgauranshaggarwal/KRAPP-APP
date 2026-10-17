@@ -24,7 +24,7 @@ You are continuing work on KRAPP APP (repo: E:\KRAPP-APP).
 
 Context:
 - Read docs/DOCUMENTATION.md, docs/PRD.md, docs/TODO.md, README.md fully.
-- Project: WhatsApp-like 1:1 chat app, neumorphic light/dark, username-based invites, free tiers only (Cloudflare Pages + Supabase).
+- Project: WhatsApp-like 1:1 chat app, flat/neutral design system with one accent, light/dark, username-based invites, free tiers only (Cloudflare Pages + Supabase).
 - Rules: username+password login only, profile editable (incl. email), profile pic only after acceptance, single intro msg on invite, keep last 5 msgs per chat (daily purge), media deleted daily regardless, 1:1 MVP.
 - Current phase: Phase 1 (UI Foundation). Start from TODO.md Phase 1.1 onward.
 
@@ -40,6 +40,6 @@ Start by confirming current state (files present) and begin Phase 1.1.
 - No code built yet (planning complete)
 
 ## Notes
-- Keep changes small and consistent with neumorphic style.
+- Keep changes small and consistent with the "Quiet Ink" design system (DOCUMENTATION.md §5; constraints + decisions in `.21st/design.json`).
 - Maintain session continuity via docs.
 - Free tiers only - respect constraints.

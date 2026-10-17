@@ -8,10 +8,10 @@ This is the master todo list. Work in the specified order: UI -> UX -> Realtime 
 - [x] 1.1 Initialize Vite + React + TypeScript project (React 19.3, TS 6.0, Vite 8.3)
 - [x] 1.2 Setup Git repo and .gitignore (node_modules, .env*, build outputs)
 - [x] 1.3 Add Tailwind CSS v4 (@tailwindcss/vite, CSS-first `@theme`)
-- [x] 1.4 Component strategy: custom neumorphic components (no shadcn). Added `cn()` helper (clsx + tailwind-merge)
+- [x] 1.4 Component strategy: custom flat components (no shadcn). Added `cn()` helper (clsx + tailwind-merge)
 - [x] 1.5 Add Fira Sans font (self-hosted via @fontsource/fira-sans, weights 400/500/600/700)
 - [x] 1.6 Lint setup (oxlint from Vite scaffold) — Prettier deferred to Phase 2/5
-- [x] 1.7 Design system: color tokens (light/dark), neumorphic shadow utilities, radius, typography
+- [x] 1.7 Design system: color tokens (light/dark), flat surfaces + hairlines, radius, typography
 - [x] 1.8 Routing structure (react-router-dom v7): public auth routes + app shell routes
 - [x] 1.9 Auth UI: Signup screen (display name, username, email, password)
 - [x] 1.10 Auth UI: Signin screen (username + password only)
@@ -49,7 +49,7 @@ This is the master todo list. Work in the specified order: UI -> UX -> Realtime 
 - [ ] 2.12 Delete account confirmation modal (destructive action)
 - [ ] 2.13 Delete conversation confirmation
 - [ ] 2.14 Accessibility: aria labels, focus management, keyboard nav basics
-- [ ] 2.15 Neumorphic consistency pass (shadows, borders, active states)
+- [x] 2.15 Design consistency pass ("Quiet Ink": hairlines, active states, spacing)
 - [ ] 2.16 Dark mode polish
 - [ ] 2.17 Update DOCUMENTATION.md with UX decisions
 
@@ -138,10 +138,10 @@ This is the master todo list. Work in the specified order: UI -> UX -> Realtime 
 **Phase 4 Done When:** Can send/receive images, voice notes, files with proper UI/limits.
 
 ## Phase 5: Polish, Deployment, Safety & Docs
-**Goal:** Finalize MVP for deployment, polish neumorphic UI, add safety notice, complete docs.
+**Goal:** Finalize MVP for deployment, polish the UI (light/dark consistency), add safety notice, complete docs.
 
 - [ ] 5.1 Safety notice implemented and visible (login/signup/footer per choice)
-- [ ] 5.2 Neumorphic design audit across all screens (light/dark)
+- [ ] 5.2 Design audit across all screens (light/dark) — extend the CDP audit, add contrast/layout checks to CI if practical
 - [ ] 5.3 Mobile UX audit (gestures, back nav, keyboard)
 - [ ] 5.4 Desktop UX audit (split view behavior)
 - [ ] 5.5 Performance: lazy load routes, optimize images

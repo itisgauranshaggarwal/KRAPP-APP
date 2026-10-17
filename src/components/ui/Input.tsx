@@ -23,7 +23,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       {label ? (
         <label
           htmlFor={inputId}
-          className="mb-2 block text-xs font-semibold tracking-wide text-muted uppercase"
+          className="mb-1.5 block text-[13px] font-medium text-text"
         >
           {label}
         </label>
@@ -31,21 +31,22 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 
       <div
         className={cn(
-          'neu-inset flex items-center gap-2 rounded-xl px-3.5',
-          'transition-[box-shadow,outline-color] duration-150',
-          'focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-[var(--ring)]',
-          error && 'outline-2 outline-offset-1 outline-[var(--danger)]',
+          'flex items-center gap-2 rounded-lg border bg-surface px-3',
+          'transition-colors duration-100',
+          error
+            ? 'border-danger focus-within:ring-2 focus-within:ring-danger-soft'
+            : 'border-line-strong focus-within:border-primary focus-within:ring-2 focus-within:ring-primary-soft',
         )}
       >
-        {leadingIcon ? <span className="text-faint">{leadingIcon}</span> : null}
+        {leadingIcon ? <span className="shrink-0 text-faint">{leadingIcon}</span> : null}
         <input
           ref={ref}
           id={inputId}
           aria-invalid={Boolean(error) || undefined}
           aria-describedby={describedBy}
           className={cn(
-            'h-11 w-full min-w-0 bg-transparent text-sm text-text placeholder:text-faint',
-            'outline-none focus-visible:outline-none',
+            'h-10 w-full min-w-0 bg-transparent text-sm text-text placeholder:text-faint',
+            'outline-none focus-visible:ring-2 focus-visible:ring-primary-soft',
             className,
           )}
           {...props}
@@ -54,7 +55,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       </div>
 
       {error ? (
-        <p id={`${inputId}-error`} className="mt-1.5 text-xs font-medium text-danger">
+        <p id={`${inputId}-error`} className="mt-1.5 text-xs text-danger">
           {error}
         </p>
       ) : hint ? (

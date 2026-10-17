@@ -31,8 +31,8 @@ export function PageHeader({
   return (
     <header
       className={cn(
-        'sticky top-0 z-20 flex items-center gap-2.5 border-b border-line bg-surface/70 px-3 py-2.5 backdrop-blur-xl',
-        'supports-[backdrop-filter]:bg-surface/60 sm:px-4',
+        'sticky top-0 z-20 flex items-center gap-2.5 border-b border-line bg-surface px-3 py-2.5',
+        'sm:px-4',
         className,
       )}
     >
@@ -50,14 +50,16 @@ export function PageHeader({
       {leading ? <div className="shrink-0">{leading}</div> : null}
 
       <div className="min-w-0 flex-1">
-        <h1 className="truncate text-[15px] font-semibold tracking-[-0.01em] text-text">{title}</h1>
+        <h1 className="truncate text-[17px] leading-6 font-semibold tracking-[-0.01em] text-text">
+          {title}
+        </h1>
         {subtitle ? (
-          <div className="truncate text-xs text-muted">{subtitle}</div>
+          <div className="truncate text-[13px] text-muted">{subtitle}</div>
         ) : null}
       </div>
 
       {actions ? (
-        <div className="flex shrink-0 items-center gap-0.5">{actions}</div>
+        <div className="flex shrink-0 items-center gap-1">{actions}</div>
       ) : null}
     </header>
   )

@@ -1,6 +1,7 @@
 import { Check, CheckCheck } from 'lucide-react'
 
 import { Avatar } from '@/components/ui/Avatar'
+import { CountBadge } from '@/components/ui/Badge'
 import { cn } from '@/lib/utils'
 import { formatListTime } from '@/lib/format'
 import type { Conversation, MessageStatus } from '@/types'
@@ -14,11 +15,15 @@ export interface ChatListItemProps {
 
 function PreviewTicks({ status }: { status: MessageStatus }) {
   if (status === 'seen') return <CheckCheck className="size-4 shrink-0 text-primary" aria-hidden />
-  if (status === 'delivered') return <CheckCheck className="size-4 shrink-0" aria-hidden />
-  if (status === 'sent') return <Check className="size-4 shrink-0" aria-hidden />
-  return <Check className="size-4 shrink-0 opacity-60" aria-hidden />
+  if (status === 'delivered') return <CheckCheck className="size-4 shrink-0 text-faint" aria-hidden />
+  if (status === 'sent') return <Check className="size-4 shrink-0 text-faint" aria-hidden />
+  return <Check className="size-4 shrink-0 text-faint/70" aria-hidden />
 }
 
+/**
+ * Information-dense list row: name / time on top, preview + unread below,
+ * hairline separator between rows, accent tint for the active chat.
+ */
 export function ChatListItem({
   conversation,
   active,
@@ -35,9 +40,9 @@ export function ChatListItem({
       onClick={onClick}
       aria-current={active ? 'true' : undefined}
       className={cn(
-        'group flex w-full items-center gap-3 rounded-xl px-2.5 py-2.5 text-left',
-        'transition-[background-color,box-shadow] duration-150',
-        active ? 'neu-inset' : 'hover:bg-surface-2 active:bg-surface-3',
+        'group flex w-full items-center gap-3 border-b border-line px-4 py-2.5 text-left',
+        'transition-colors duration-100',
+        active ? 'bg-primary-soft' : 'hover:bg-surface-2 active:bg-surface-3',
       )}
     >
       <Avatar
@@ -50,7 +55,12 @@ export function ChatListItem({
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
-          <span className={cn('truncate text-text', unread ? 'font-semibold' : 'font-medium')}>
+          <span
+            className={cn(
+              'truncate text-[15px] leading-5 text-text',
+              unread ? 'font-semibold' : 'font-medium',
+            )}
+          >
             {user.displayName}
           </span>
           <span
@@ -66,17 +76,15 @@ export function ChatListItem({
         <div className="mt-0.5 flex items-center justify-between gap-2">
           <span
             className={cn(
-              'flex min-w-0 items-center gap-1 text-sm',
+              'flex min-w-0 items-center gap-1 text-[13.5px] leading-5',
               unread ? 'font-medium text-text' : 'text-muted',
             )}
           >
             {mine ? <PreviewTicks status={lastMessage?.status ?? 'sent'} /> : null}
-            <span className="truncate">{lastMessage?.content ?? 'Say hi 👋'}</span>
+            <span className="truncate">{lastMessage?.content ?? 'Say hi to start chatting'}</span>
           </span>
           {unread ? (
-            <span className="inline-flex min-w-5 shrink-0 items-center justify-center rounded-full brand-gradient px-1.5 py-0.5 text-[11px] font-semibold text-primary-contrast shadow-[0_4px_10px_-4px_var(--primary)]">
-              {unreadCount > 99 ? '99+' : unreadCount}
-            </span>
+            <CountBadge count={unreadCount} className="shrink-0" />
           ) : null}
         </div>
       </div>

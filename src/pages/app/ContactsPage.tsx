@@ -47,78 +47,78 @@ export function ContactsPage() {
   }
 
   return (
-    <div className="relative flex h-full flex-col">
-      <div aria-hidden className="app-texture pointer-events-none absolute inset-0 opacity-70" />
+    <div className="flex h-full min-h-0 flex-col bg-bg">
+      <PageHeader
+        title="Contacts"
+        subtitle={`${contacts.length} ${contacts.length === 1 ? 'person' : 'people'}`}
+        actions={<NewContactDialog />}
+      />
 
-      <div className="relative z-10 flex h-full min-h-0 flex-col">
-        <PageHeader
-          title="Contacts"
-          subtitle={`${contacts.length} ${contacts.length === 1 ? 'person' : 'people'}`}
-          actions={<NewContactDialog />}
+      <div className="px-4 pt-4">
+        <Input
+          placeholder="Search contacts"
+          aria-label="Search contacts"
+          leadingIcon={<Search className="size-4" />}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="h-9"
         />
+      </div>
 
-        <div className="px-4 pt-4">
-          <Input
-            placeholder="Search contacts"
-            aria-label="Search contacts"
-            leadingIcon={<Search className="size-4.5" />}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
+      <div className="flex-1 overflow-y-auto p-3 scroll-soft">
+        {filtered.length === 0 ? (
+          <EmptyState
+            icon={Users}
+            title={query ? 'No contacts found' : 'No contacts yet'}
+            description={
+              query
+                ? 'Try a different name or username.'
+                : 'Search a username and send a request to get started.'
+            }
+            action={query ? undefined : <NewContactDialog />}
           />
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-3 scroll-soft">
-          {filtered.length === 0 ? (
-            <EmptyState
-              icon={Users}
-              title={query ? 'No contacts found' : 'No contacts yet'}
-              description={
-                query
-                  ? 'Try a different name or username.'
-                  : 'Search a username and send a request to get started.'
-              }
-              action={query ? undefined : <NewContactDialog />}
-            />
-          ) : (
-            <ul className="mx-auto flex max-w-2xl flex-col gap-0.5">
-              {filtered.map((contact) => (
-                <li
-                  key={contact.id}
-                  className="group flex items-center gap-3 rounded-xl px-2.5 py-2.5 transition-colors duration-150 hover:bg-surface-2"
+        ) : (
+          <ul className="mx-auto flex max-w-2xl flex-col overflow-hidden rounded-xl border border-line bg-surface">
+            {filtered.map((contact) => (
+              <li
+                key={contact.id}
+                className="group flex items-center gap-3 border-b border-line px-4 py-2.5 transition-colors duration-100 last:border-b-0 hover:bg-surface-2"
+              >
+                <Avatar
+                  name={contact.user.displayName}
+                  username={contact.user.username}
+                  src={contact.user.avatarUrl}
+                  size="lg"
+                  online={contact.user.online}
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[15px] leading-5 font-medium text-text">
+                    {contact.user.displayName}
+                  </p>
+                  <p className="truncate text-sm text-muted">@{contact.user.username}</p>
+                </div>
+                <IconButton
+                  label={`Message ${contact.user.displayName}`}
+                  variant="ghost"
+                  size="sm"
+                  className="hover:bg-primary-soft hover:text-primary"
+                  onClick={() => openChat(contact)}
                 >
-                  <Avatar
-                    name={contact.user.displayName}
-                    username={contact.user.username}
-                    src={contact.user.avatarUrl}
-                    size="lg"
-                    online={contact.user.online}
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium text-text">{contact.user.displayName}</p>
-                    <p className="truncate text-sm text-muted">@{contact.user.username}</p>
-                  </div>
-                  <IconButton
-                    label={`Message ${contact.user.displayName}`}
-                    variant="neu"
-                    size="sm"
-                    onClick={() => openChat(contact)}
-                  >
-                    <MessageCircle className="size-4.5" />
-                  </IconButton>
-                  <IconButton
-                    label={`Remove ${contact.user.displayName}`}
-                    variant="ghost"
-                    size="sm"
-                    className="hover:text-danger"
-                    onClick={() => setPendingDelete(contact)}
-                  >
-                    <Trash2 className="size-4.5" />
-                  </IconButton>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+                  <MessageCircle className="size-4.5" />
+                </IconButton>
+                <IconButton
+                  label={`Remove ${contact.user.displayName}`}
+                  variant="ghost"
+                  size="sm"
+                  className="hover:text-danger"
+                  onClick={() => setPendingDelete(contact)}
+                >
+                  <Trash2 className="size-4.5" />
+                </IconButton>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <Modal

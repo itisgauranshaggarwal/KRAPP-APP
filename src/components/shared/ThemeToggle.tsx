@@ -11,7 +11,7 @@ export function ThemeToggle() {
   return (
     <IconButton
       label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-      variant="neu"
+      variant="ghost"
       onClick={toggle}
     >
       {isDark ? <Sun className="size-5" /> : <Moon className="size-5" />}

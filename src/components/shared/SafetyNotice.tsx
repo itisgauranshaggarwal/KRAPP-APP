@@ -10,7 +10,7 @@ export function SafetyNotice({ className }: { className?: string }) {
   return (
     <p
       className={cn(
-        'hairline flex items-start gap-2.5 rounded-xl bg-surface-2/60 p-3.5 text-xs leading-relaxed text-muted',
+        'flex items-start gap-2.5 rounded-lg border border-line bg-surface-2 px-3.5 py-3 text-xs leading-relaxed text-muted',
         className,
       )}
     >

@@ -16,7 +16,7 @@ export function ChatsScreen() {
     <div className="flex h-full min-h-0">
       <aside
         className={cn(
-          'w-full flex-col border-r border-line bg-surface/50 backdrop-blur-xl lg:flex lg:w-[380px] xl:w-[420px]',
+          'w-full flex-col lg:flex lg:w-[380px] xl:w-[420px]',
           conversationId ? 'hidden lg:flex' : 'flex',
         )}
       >

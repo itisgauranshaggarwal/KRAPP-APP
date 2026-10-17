@@ -1,4 +1,4 @@
-import { Eye, EyeOff, Lock, User as UserIcon } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -59,7 +59,6 @@ export function LoginPage() {
           name="username"
           autoComplete="username"
           placeholder="your username"
-          leadingIcon={<UserIcon className="size-4.5" />}
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           error={errors.username}
@@ -72,7 +71,6 @@ export function LoginPage() {
           type={showPassword ? 'text' : 'password'}
           autoComplete="current-password"
           placeholder="••••••••"
-          leadingIcon={<Lock className="size-4.5" />}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           error={errors.password}

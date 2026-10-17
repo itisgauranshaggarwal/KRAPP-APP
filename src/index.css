@@ -4,118 +4,115 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ===========================================================================
- * KRAPP APP — design system
+ * KRAPP APP — design system ("Quiet Ink")
  * ---------------------------------------------------------------------------
- * Brand: "Grape" (violet #7C5CFF) with a "Sunset" coral accent (#FF6B8A).
- * Style: restrained neumorphism (soft UI). Crisp shadows, tight radii,
- *        real hierarchy — no oversized floating blobs.
- * Font:  Fira Sans (self-hosted).
+ * One accent: deep petrol teal. Everything else is neutral.
+ * Light: warm paper greys + white surfaces. Dark: neutral charcoal.
+ * Flat surfaces defined by hairlines, not shadows. Fira Sans throughout.
  * =========================================================================== */
 
 :root {
-  /* Brand primitives */
-  --brand-1: #7c5cff;
-  --brand-2: #a95cff;
-  --brand-3: #ff6b8a;
+  color-scheme: light;
 
-  /* Surfaces — light */
-  --bg: #ebe9f4;
-  --bg-elevated: #f1eff9;
-  --surface: #ebe9f4;
-  --surface-2: #e2dff0;
-  --surface-3: #d8d4e9;
+  /* Surfaces */
+  --bg: #f3f3f1;
+  --surface: #ffffff;
+  --surface-2: #f7f7f5;
+  --surface-3: #eaeae7;
 
   /* Text */
-  --text: #232134;
-  --text-muted: #67647e;
-  --text-faint: #7d7994;
+  --text: #1a1b19;
+  --text-muted: #54554e;
+  --text-faint: #65665e;
 
-  /* Brand semantic */
-  --primary: #7c5cff;
-  --primary-hover: #6d4dff;
-  --primary-active: #5c3ce0;
+  /* Accent (the one colour) */
+  --primary: #0e7c7f;
+  --primary-hover: #0c6e71;
+  --primary-active: #0a5f62;
   --primary-contrast: #ffffff;
-  --primary-soft: rgba(124, 92, 255, 0.12);
-  --primary-ring: rgba(124, 92, 255, 0.42);
-
-  --accent: #ff5c7f;
-  --accent-soft: rgba(255, 92, 127, 0.14);
+  --primary-soft: rgba(14, 124, 127, 0.09);
+  --primary-ring: rgba(14, 124, 127, 0.32);
 
   /* Status */
-  --danger: #f0425c;
-  --danger-soft: rgba(240, 66, 92, 0.12);
-  --warning: #a86a00;
-  --warning-soft: rgba(224, 140, 11, 0.16);
-  --success: #12a877;
-  --online: #1fc98b;
+  --danger: #be3b2e;
+  --danger-hover: #a93326;
+  --danger-soft: rgba(190, 59, 46, 0.1);
+  --warning: #8a6100;
+  --warning-soft: rgba(201, 143, 11, 0.14);
+  --success: #1e7a4e;
+  --success-soft: rgba(30, 122, 78, 0.1);
+  --online: #1fa663;
 
   /* Lines */
-  --border: rgba(35, 33, 52, 0.09);
-  --border-strong: rgba(35, 33, 52, 0.16);
+  --border: rgba(26, 27, 25, 0.1);
+  --border-strong: rgba(26, 27, 25, 0.17);
 
-  /* Neumorphic shadow pair */
-  --shadow-light: #ffffff;
-  --shadow-dark: #c5c1d9;
-
-  /* Decorative texture dot */
-  --texture-dot: rgba(35, 33, 52, 0.055);
-
-  /* Focus ring */
-  --ring: rgba(124, 92, 255, 0.45);
+  /* Focus */
+  --ring: rgba(14, 124, 127, 0.4);
 
   /* Chat bubbles */
-  --bubble-in: #f6f5fc;
-  --bubble-in-text: #232134;
-  --bubble-out: #7c5cff;
+  --bubble-in: #ffffff;
+  --bubble-in-text: #1a1b19;
+  --bubble-out: #0e7c7f;
   --bubble-out-text: #ffffff;
+  /* Read-receipt tick on the accent bubble */
+  --tick-seen: #8fe9e6;
+
+  /* Ink panel (auth brand column) */
+  --panel: #1a1b19;
+  --panel-text: #f2f3f0;
+  --panel-muted: #a9aba3;
+
+  /* Elevated overlays (modals, tooltips) */
+  --shadow-pop: 0 16px 44px -18px rgba(20, 22, 20, 0.35), 0 4px 12px -6px rgba(20, 22, 20, 0.18);
 
   /* Motion */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .dark {
-  --bg: #161521;
-  --bg-elevated: #1c1a29;
-  --surface: #161521;
-  --surface-2: #201e2e;
-  --surface-3: #282539;
+  color-scheme: dark;
 
-  --text: #efedf7;
-  --text-muted: #a5a1bd;
-  --text-faint: #8a86a0;
+  --bg: #121312;
+  --surface: #1a1b1a;
+  --surface-2: #212221;
+  --surface-3: #2b2c2a;
 
-  --primary: #8b6cff;
-  --primary-hover: #9a7dff;
-  --primary-active: #7a58f0;
-  --primary-contrast: #ffffff;
-  --primary-soft: rgba(139, 108, 255, 0.18);
-  --primary-ring: rgba(139, 108, 255, 0.5);
+  --text: #ecedea;
+  --text-muted: #9c9e96;
+  --text-faint: #949690;
 
-  --accent: #ff7f9c;
-  --accent-soft: rgba(255, 127, 156, 0.18);
+  --primary: #2fb0aa;
+  --primary-hover: #3bbdb7;
+  --primary-active: #279a95;
+  --primary-contrast: #062524;
+  --primary-soft: rgba(47, 176, 170, 0.13);
+  --primary-ring: rgba(47, 176, 170, 0.45);
 
-  --danger: #ff5a72;
-  --danger-soft: rgba(255, 90, 114, 0.16);
-  --warning: #f5b043;
-  --warning-soft: rgba(245, 176, 67, 0.16);
-  --success: #22c98d;
-  --online: #24d99a;
+  --danger: #b23a31;
+  --danger-hover: #c4453b;
+  --danger-soft: rgba(241, 114, 104, 0.13);
+  --warning: #e0ab3d;
+  --warning-soft: rgba(224, 171, 61, 0.14);
+  --success: #4cc38a;
+  --success-soft: rgba(76, 195, 138, 0.13);
+  --online: #35c985;
 
-  --border: rgba(239, 237, 247, 0.09);
-  --border-strong: rgba(239, 237, 247, 0.18);
+  --border: rgba(236, 237, 234, 0.1);
+  --border-strong: rgba(236, 237, 234, 0.18);
 
-  --shadow-light: #232134;
-  --shadow-dark: #0b0a12;
+  --ring: rgba(47, 176, 170, 0.5);
 
-  --texture-dot: rgba(239, 237, 247, 0.045);
-
-  --ring: rgba(139, 108, 255, 0.5);
-
-  --bubble-in: #262433;
-  --bubble-in-text: #efedf7;
-  --bubble-out: #7c5cff;
+  --bubble-in: #232423;
+  --bubble-in-text: #ecedea;
+  --bubble-out: #0e7c7f;
   --bubble-out-text: #ffffff;
+
+  --panel: #1d1f1e;
+  --panel-text: #f2f3f0;
+  --panel-muted: #a4a69e;
+
+  --shadow-pop: 0 16px 44px -16px rgba(0, 0, 0, 0.6), 0 4px 12px -6px rgba(0, 0, 0, 0.4);
 }
 
 /* Map CSS variables to Tailwind theme tokens (inline keeps them live per-theme) */
@@ -123,7 +120,6 @@
   --font-sans: 'Fira Sans', ui-sans-serif, system-ui, sans-serif;
 
   --color-bg: var(--bg);
-  --color-bg-elevated: var(--bg-elevated);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
   --color-surface-3: var(--surface-3);
@@ -137,30 +133,31 @@
   --color-primary-active: var(--primary-active);
   --color-primary-contrast: var(--primary-contrast);
   --color-primary-soft: var(--primary-soft);
-  --color-accent: var(--accent);
-  --color-accent-soft: var(--accent-soft);
 
   --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
   --color-danger-soft: var(--danger-soft);
   --color-warning: var(--warning);
   --color-warning-soft: var(--warning-soft);
   --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
   --color-online: var(--online);
 
   --color-line: var(--border);
   --color-line-strong: var(--border-strong);
 
+  --color-panel: var(--panel);
+  --color-panel-text: var(--panel-text);
+  --color-panel-muted: var(--panel-muted);
+
   --color-bubble-in: var(--bubble-in);
   --color-bubble-in-text: var(--bubble-in-text);
   --color-bubble-out: var(--bubble-out);
   --color-bubble-out-text: var(--bubble-out-text);
+  --color-tick-seen: var(--tick-seen);
 
-  --radius-neu: 1rem;
-  --radius-app: 0.875rem;
-
-  --animate-rise: rise 0.32s var(--ease-out) both;
-  --animate-fade: fade 0.25s ease both;
-  --animate-pop: pop 0.3s var(--ease-spring) both;
+  --animate-rise: rise 0.18s var(--ease-out) both;
+  --animate-fade: fade 0.14s ease both;
 }
 
 /* Keyframes ----------------------------------------------------------------- */
@@ -168,7 +165,7 @@
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(7px) scale(0.985);
+    transform: translateY(4px);
   }
   to {
     opacity: 1;
@@ -185,26 +182,12 @@
   }
 }
 
-@keyframes pop {
-  0% {
-    opacity: 0;
-    transform: translateY(9px) scale(0.955);
-  }
-  60% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 1;
-    transform: none;
-  }
-}
-
 @keyframes typing-bounce {
   0%,
   70%,
   100% {
     transform: translateY(0);
-    opacity: 0.45;
+    opacity: 0.4;
   }
   35% {
     transform: translateY(-3px);
@@ -243,10 +226,9 @@ html.theme-ready,
 html.theme-ready body,
 html.theme-ready .theme-transition {
   transition:
-    background-color 220ms ease,
-    border-color 220ms ease,
-    color 180ms ease,
-    box-shadow 220ms ease;
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 160ms ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -282,122 +264,6 @@ html.theme-ready .theme-transition {
 }
 .scroll-soft::-webkit-scrollbar-track {
   background: transparent;
-}
-
-/* Neumorphic surfaces ------------------------------------------------------ */
-
-@utility neu-raised {
-  background-color: var(--surface);
-  box-shadow:
-    6px 6px 14px var(--shadow-dark),
-    -6px -6px 14px var(--shadow-light);
-}
-
-@utility neu-raised-sm {
-  background-color: var(--surface);
-  box-shadow:
-    3px 3px 7px var(--shadow-dark),
-    -3px -3px 7px var(--shadow-light);
-}
-
-@utility neu-raised-lg {
-  background-color: var(--surface);
-  box-shadow:
-    10px 10px 24px var(--shadow-dark),
-    -10px -10px 24px var(--shadow-light);
-}
-
-@utility neu-inset {
-  background-color: var(--surface);
-  box-shadow:
-    inset 4px 4px 9px var(--shadow-dark),
-    inset -4px -4px 9px var(--shadow-light);
-}
-
-@utility neu-inset-sm {
-  background-color: var(--surface);
-  box-shadow:
-    inset 2px 2px 5px var(--shadow-dark),
-    inset -2px -2px 5px var(--shadow-light);
-}
-
-/* Flat panel: gently sunken surface with a hairline for definition. */
-@utility neu-flat {
-  background-color: var(--surface-2);
-  box-shadow: inset 0 0 0 1px var(--border);
-}
-
-/* Pressable: raised -> inset on active. */
-@utility neu-press {
-  background-color: var(--surface);
-  box-shadow:
-    5px 5px 11px var(--shadow-dark),
-    -5px -5px 11px var(--shadow-light);
-  transition:
-    box-shadow 150ms var(--ease-out),
-    transform 150ms var(--ease-out),
-    color 150ms ease;
-
-  &:hover {
-    box-shadow:
-      6px 6px 13px var(--shadow-dark),
-      -6px -6px 13px var(--shadow-light);
-  }
-
-  &:active {
-    box-shadow:
-      inset 3px 3px 7px var(--shadow-dark),
-      inset -3px -3px 7px var(--shadow-light);
-    transform: translateY(1px) scale(0.992);
-  }
-}
-
-/* Soft divider line that works on neumorphic surfaces. */
-@utility neu-divider {
-  border-color: transparent;
-  box-shadow:
-    0 1px 0 var(--shadow-light),
-    0 -1px 0 var(--shadow-dark);
-}
-
-/* Brand ------------------------------------------------------------------- */
-
-@utility brand-gradient {
-  background-image: linear-gradient(
-    135deg,
-    var(--brand-1) 0%,
-    var(--brand-2) 56%,
-    var(--brand-3) 128%
-  );
-}
-
-@utility brand-gradient-soft {
-  background-image: linear-gradient(135deg, var(--primary-soft), var(--accent-soft));
-}
-
-@utility text-gradient {
-  background-image: linear-gradient(115deg, var(--brand-1), var(--brand-2) 52%, var(--brand-3));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* A soft brand glow, used sparingly on primary actions. */
-@utility glow-brand {
-  box-shadow:
-    0 10px 24px -10px var(--primary),
-    0 3px 8px -4px var(--shadow-dark);
-}
-
-/* Decoration -------------------------------------------------------------- */
-
-@utility app-texture {
-  background-image: radial-gradient(circle at 1px 1px, var(--texture-dot) 1.2px, transparent 0);
-  background-size: 22px 22px;
-}
-
-@utility hairline {
-  box-shadow: inset 0 0 0 1px var(--border);
 }
 
 /* Focus visibility -------------------------------------------------------- */

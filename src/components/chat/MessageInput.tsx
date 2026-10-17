@@ -53,12 +53,7 @@ export function MessageInput({
   const hasText = value.trim().length > 0
 
   return (
-    <div
-      className={cn(
-        'relative z-10 border-t border-line bg-surface/70 px-3 py-3 backdrop-blur-xl sm:px-6',
-        className,
-      )}
-    >
+    <div className={cn('border-t border-line bg-surface px-3 py-2.5 sm:px-6', className)}>
       <div className="mx-auto flex max-w-3xl items-end gap-2">
         {/* Media actions arrive in Phase 4. */}
         <IconButton
@@ -70,8 +65,8 @@ export function MessageInput({
           <Paperclip className="size-5" />
         </IconButton>
 
-        <div className="neu-inset flex flex-1 items-end gap-1.5 rounded-2xl px-2 py-1.5">
-          <IconButton label="Emoji" size="sm" variant="ghost" className="mb-0.5 size-9">
+        <div className="flex flex-1 items-end gap-1 rounded-lg border border-line-strong bg-surface px-1.5 py-1 transition-[border-color,box-shadow] duration-100 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary-soft">
+          <IconButton label="Emoji" size="sm" variant="ghost" className="mb-0.5">
             <Smile className="size-5" />
           </IconButton>
 
@@ -90,7 +85,7 @@ export function MessageInput({
             onKeyDown={handleKeyDown}
             onBlur={() => notifyTyping(false)}
             className={cn(
-              'max-h-[140px] min-h-9 flex-1 resize-none bg-transparent py-2 text-sm text-text',
+              'max-h-[140px] min-h-9 flex-1 resize-none bg-transparent py-1.5 text-sm text-text',
               'placeholder:text-faint focus-visible:outline-none scroll-soft',
             )}
           />
@@ -100,7 +95,7 @@ export function MessageInput({
           <IconButton
             label="Send message"
             variant="primary"
-            className="animate-pop"
+            className="animate-fade"
             onClick={submit}
             disabled={disabled}
           >
@@ -109,7 +104,7 @@ export function MessageInput({
         ) : (
           <IconButton
             label="Hold to record a voice note"
-            variant="neu"
+            variant="ghost"
             disabled={disabled}
             title="Voice notes arrive in a later update"
           >

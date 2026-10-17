@@ -4,20 +4,17 @@ import {
   Check,
   Info,
   Mail,
-  MessageCircle,
   Monitor,
   Moon,
   Sun,
   Trash2,
-  UserPlus,
-  Users,
 } from 'lucide-react'
 import { useRef, useState, type ChangeEvent, type ReactNode } from 'react'
 
+import { PageHeader } from '@/components/layout/PageHeader'
 import { SafetyNotice } from '@/components/shared/SafetyNotice'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
-import { IconButton } from '@/components/ui/IconButton'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
 import { cn } from '@/lib/utils'
@@ -35,8 +32,7 @@ type FieldErrors = {
 }
 
 export function ProfilePage() {
-  const { currentUser, updateProfile, isAvailableUsername, contacts, conversations, incomingRequests } =
-    useAppData()
+  const { currentUser, updateProfile, isAvailableUsername } = useAppData()
   const { mode, setMode } = useTheme()
   const fileRef = useRef<HTMLInputElement>(null)
 
@@ -95,41 +91,39 @@ export function ProfilePage() {
   ]
 
   return (
-    <div className="relative flex h-full flex-col">
-      <div aria-hidden className="app-texture pointer-events-none absolute inset-0 opacity-70" />
+    <div className="flex h-full min-h-0 flex-col bg-bg">
+      <PageHeader title="Profile" subtitle={`@${currentUser.username}`} />
 
-      <div className="relative z-10 flex-1 overflow-y-auto scroll-soft">
-        <div className="mx-auto flex max-w-2xl flex-col gap-4 px-4 py-5 pb-24 lg:pb-8">
-          {/* Hero */}
-          <section className="neu-raised overflow-hidden rounded-2xl">
-            <div className="brand-gradient relative h-28">
-              <div aria-hidden className="app-texture absolute inset-0 opacity-30" />
-              <div
-                aria-hidden
-                className="absolute inset-0 bg-[radial-gradient(120%_140%_at_0%_0%,rgba(255,255,255,0.35),transparent_60%)]"
+      <div className="flex-1 overflow-y-auto scroll-soft">
+        <div className="mx-auto flex max-w-2xl flex-col gap-5 px-4 py-5 pb-24 lg:pb-8">
+          {/* Identity */}
+          <section className="rounded-xl border border-line bg-surface p-5">
+            <div className="flex items-start gap-4">
+              <Avatar
+                name={currentUser.displayName}
+                username={currentUser.username}
+                src={currentUser.avatarUrl}
+                size="xl"
               />
-            </div>
 
-            <div className="px-5 pb-5">
-              <div className="relative -mt-12 inline-flex">
-                <span className="brand-gradient inline-flex rounded-full p-[3px] ring-4 ring-[var(--surface)]">
-                  <Avatar
-                    name={currentUser.displayName}
-                    username={currentUser.username}
-                    src={currentUser.avatarUrl}
-                    size="xl"
-                    className="ring-0"
-                  />
-                </span>
-                <IconButton
-                  label="Change profile picture"
+              <div className="min-w-0 flex-1">
+                <h2 className="text-xl leading-7 font-semibold tracking-[-0.01em] text-text">
+                  {currentUser.displayName}
+                </h2>
+                <p className="text-sm text-muted">@{currentUser.username}</p>
+                {currentUser.bio ? (
+                  <p className="mt-1.5 text-sm leading-relaxed text-muted">{currentUser.bio}</p>
+                ) : null}
+
+                <Button
+                  variant="secondary"
                   size="sm"
-                  variant="primary"
-                  className="absolute -right-0.5 -bottom-0.5"
+                  className="mt-3"
                   onClick={() => fileRef.current?.click()}
                 >
-                  <Camera className="size-4" />
-                </IconButton>
+                  <Camera className="size-4" aria-hidden />
+                  Change photo
+                </Button>
                 <input
                   ref={fileRef}
                   type="file"
@@ -138,28 +132,11 @@ export function ProfilePage() {
                   onChange={pickAvatar}
                 />
               </div>
-
-              <div className="mt-3">
-                <h2 className="text-xl font-bold tracking-[-0.02em] text-text">
-                  {currentUser.displayName}
-                </h2>
-                <p className="text-sm text-muted">@{currentUser.username}</p>
-                {currentUser.bio ? (
-                  <p className="mt-2 text-sm leading-relaxed text-muted">{currentUser.bio}</p>
-                ) : null}
-              </div>
-
-              <p className="mt-3 text-xs text-faint">
-                Your picture and profile are only visible to people who have accepted your request.
-              </p>
             </div>
-          </section>
 
-          {/* Stats */}
-          <section className="neu-raised grid grid-cols-3 divide-x divide-line rounded-2xl py-3.5">
-            <Stat icon={Users} label="Contacts" value={contacts.length} />
-            <Stat icon={MessageCircle} label="Chats" value={conversations.length} />
-            <Stat icon={UserPlus} label="Pending" value={incomingRequests.length} accent />
+            <p className="mt-4 border-t border-line pt-3 text-xs leading-relaxed text-faint">
+              Your picture and profile are only visible to people who have accepted your request.
+            </p>
           </section>
 
           {/* Account */}
@@ -178,7 +155,7 @@ export function ProfilePage() {
               onChange={(e) => setUsername(e.target.value.toLowerCase())}
               error={errors.username}
               hint="Friends add you with this."
-              leadingIcon={<AtSign className="size-4.5" />}
+              leadingIcon={<AtSign className="size-4" />}
             />
 
             <Input
@@ -189,15 +166,15 @@ export function ProfilePage() {
               onChange={(e) => setEmail(e.target.value)}
               error={errors.email}
               hint="Used for your account only. Never shown to other people."
-              leadingIcon={<Mail className="size-4.5" />}
+              leadingIcon={<Mail className="size-4" />}
             />
 
             <div>
               <label
                 htmlFor="profile-bio"
-                className="mb-2 block text-xs font-semibold tracking-wide text-muted uppercase"
+                className="mb-1.5 block text-[13px] font-medium text-text"
               >
-                Bio <span className="font-normal text-faint normal-case">(optional)</span>
+                Bio <span className="font-normal text-faint">(optional)</span>
               </label>
               <textarea
                 id="profile-bio"
@@ -207,9 +184,9 @@ export function ProfilePage() {
                 onChange={(e) => setBio(e.target.value)}
                 placeholder="A line about you"
                 className={cn(
-                  'neu-inset w-full resize-none rounded-xl px-3.5 py-3 text-sm text-text',
+                  'w-full resize-none rounded-lg border border-line-strong bg-surface px-3 py-2.5 text-sm text-text',
                   'placeholder:text-faint focus-visible:outline-none scroll-soft',
-                  'transition-[outline-color] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--ring)]',
+                  'transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary-soft',
                 )}
               />
             </div>
@@ -229,7 +206,7 @@ export function ProfilePage() {
 
           {/* Appearance */}
           <Section title="Appearance">
-            <div className="neu-inset flex gap-1 rounded-xl p-1">
+            <div className="overflow-hidden rounded-lg border border-line">
               {themes.map(({ value, label, icon: Icon }) => {
                 const active = mode === value
                 return (
@@ -239,15 +216,26 @@ export function ProfilePage() {
                     onClick={() => setMode(value)}
                     aria-pressed={active}
                     className={cn(
-                      'flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2.5 text-sm font-semibold',
-                      'transition-[box-shadow,color,background-color,filter] duration-150',
-                      active
-                        ? 'brand-gradient text-primary-contrast glow-brand'
-                        : 'text-muted hover:text-text',
+                      'flex w-full items-center gap-3 border-b border-line px-3.5 py-3 text-left',
+                      'transition-colors duration-100 last:border-b-0',
+                      active ? 'bg-primary-soft' : 'hover:bg-surface-2',
                     )}
                   >
-                    <Icon className="size-4" aria-hidden />
-                    {label}
+                    <Icon
+                      className={cn('size-4', active ? 'text-primary' : 'text-muted')}
+                      aria-hidden
+                    />
+                    <span
+                      className={cn(
+                        'flex-1 text-sm',
+                        active ? 'font-medium text-text' : 'text-muted',
+                      )}
+                    >
+                      {label}
+                    </span>
+                    {active ? (
+                      <Check className="size-4 shrink-0 text-primary" aria-hidden />
+                    ) : null}
                   </button>
                 )
               })}
@@ -255,11 +243,7 @@ export function ProfilePage() {
           </Section>
 
           {/* About */}
-          <Section
-            title="About"
-            icon={Info}
-            subtitle="KRAPP APP · v0.1.0 · Phase 1 (UI)"
-          >
+          <Section title="About" icon={Info} subtitle="KRAPP APP · v0.1.0 · Phase 1 (UI)">
             <SafetyNotice />
           </Section>
 
@@ -313,40 +297,25 @@ function Section({
   children: ReactNode
 }) {
   return (
-    <section className="neu-raised flex flex-col gap-4 rounded-2xl p-5">
+    <section
+      className={cn(
+        'flex flex-col gap-4 rounded-xl border bg-surface p-5',
+        danger ? 'border-danger/30' : 'border-line',
+      )}
+    >
       <div>
         <h3
           className={cn(
-            'flex items-center gap-2 text-xs font-semibold tracking-wide uppercase',
+            'flex items-center gap-2 text-[13px] font-semibold',
             danger ? 'text-danger' : 'text-muted',
           )}
         >
           {Icon ? <Icon className="size-3.5" aria-hidden /> : null}
           {title}
         </h3>
-        {subtitle ? <p className="mt-1 text-xs text-faint">{subtitle}</p> : null}
+        {subtitle ? <p className="mt-0.5 text-xs text-faint">{subtitle}</p> : null}
       </div>
       {children}
     </section>
-  )
-}
-
-function Stat({
-  icon: Icon,
-  label,
-  value,
-  accent = false,
-}: {
-  icon: typeof Users
-  label: string
-  value: number
-  accent?: boolean
-}) {
-  return (
-    <div className="flex flex-col items-center gap-1 px-2">
-      <Icon className={cn('size-4', accent && value > 0 ? 'text-accent' : 'text-faint')} aria-hidden />
-      <span className="text-lg font-bold tracking-[-0.02em] text-text tabular-nums">{value}</span>
-      <span className="text-[11px] font-medium tracking-wide text-muted uppercase">{label}</span>
-    </div>
   )
 }

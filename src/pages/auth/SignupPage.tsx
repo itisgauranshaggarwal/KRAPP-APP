@@ -1,4 +1,4 @@
-import { AtSign, Eye, EyeOff, Lock, User as UserIcon } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -94,7 +94,6 @@ export function SignupPage() {
           name="displayName"
           autoComplete="name"
           placeholder="Aria Malik"
-          leadingIcon={<UserIcon className="size-4.5" />}
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
           error={errors.displayName}
@@ -106,7 +105,6 @@ export function SignupPage() {
           name="username"
           autoComplete="username"
           placeholder="aria.malik"
-          leadingIcon={<AtSign className="size-4.5" />}
           value={username}
           onChange={(e) => setUsername(e.target.value.toLowerCase())}
           error={errors.username}
@@ -119,7 +117,6 @@ export function SignupPage() {
           type="email"
           autoComplete="email"
           placeholder="you@example.com"
-          leadingIcon={<AtSign className="size-4.5" />}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           error={errors.email}
@@ -132,7 +129,6 @@ export function SignupPage() {
           type={showPassword ? 'text' : 'password'}
           autoComplete="new-password"
           placeholder="At least 5 characters"
-          leadingIcon={<Lock className="size-4.5" />}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           error={errors.password}

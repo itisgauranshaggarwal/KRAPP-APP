@@ -32,11 +32,11 @@ export function ChatList({ activeId, onSelect }: ChatListProps) {
   }, [conversations, query])
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex items-start justify-between gap-2 px-4 pt-4 pb-3">
+    <div className="flex h-full flex-col border-r border-line bg-surface">
+      <div className="flex items-start justify-between gap-2 px-4 pt-4 pb-2.5">
         <div className="min-w-0">
-          <h1 className="text-xl font-bold tracking-[-0.02em] text-text">Chats</h1>
-          <p className="mt-0.5 text-xs text-muted">
+          <h1 className="text-lg leading-7 font-semibold tracking-[-0.01em] text-text">Chats</h1>
+          <p className="text-[13px] text-muted">
             {unreadTotal > 0
               ? `${unreadTotal} unread message${unreadTotal > 1 ? 's' : ''}`
               : 'All caught up'}
@@ -49,13 +49,14 @@ export function ChatList({ activeId, onSelect }: ChatListProps) {
         <Input
           placeholder="Search chats"
           aria-label="Search chats"
-          leadingIcon={<Search className="size-4.5" />}
+          leadingIcon={<Search className="size-4" />}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          className="h-9"
         />
       </div>
 
-      <div className="flex-1 overflow-y-auto px-2 pb-3 scroll-soft">
+      <div className="flex-1 overflow-y-auto pb-3 scroll-soft">
         {filtered.length === 0 ? (
           <EmptyState
             icon={MessageCircle}
@@ -68,7 +69,7 @@ export function ChatList({ activeId, onSelect }: ChatListProps) {
             action={query ? undefined : <NewContactDialog />}
           />
         ) : (
-          <div className="flex flex-col gap-0.5">
+          <div className="flex flex-col">
             {filtered.map((conversation) => (
               <ChatListItem
                 key={conversation.id}

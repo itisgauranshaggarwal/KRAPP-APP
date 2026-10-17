@@ -1,11 +1,11 @@
 # KRAPP APP
 
-Simple 1:1 chat app with username-based invites, realtime messaging, light/dark mode, and a soft neumorphic UI. Built as a free-tier-only hobby project.
+Simple 1:1 chat app with username-based invites, realtime messaging, light/dark mode, and a quiet, product-grade interface. Built as a free-tier-only hobby project.
 
 ## Project Status
-**Phase 1 (UI Foundation) complete, plus a brand/UI polish pass.** The full UI runs on mock data: auth screens, chats, requests, contacts, profile, light/dark theme, responsive layout. Backend wiring starts in Phase 3.
+**Phase 1 (UI Foundation) complete, plus a full UI redesign.** The full UI runs on mock data: auth screens, chats, requests, contacts, profile, light/dark theme, responsive layout. Backend wiring starts in Phase 3.
 
-**Brand:** own identity — "Grape" violet `#7C5CFF` + "Sunset" coral `#FF5C7F` on lavender-grey surfaces (deliberately not a WhatsApp-green clone). Design tokens live in `src/index.css`.
+**Design:** "Quiet Ink" — neutral surfaces, hairlines instead of shadows, strong type hierarchy and a single petrol-teal accent (no gradients, glows or glassmorphism). Tokens live in `src/index.css`.
 
 ## Tech Stack
 Vite 8 · React 19 · TypeScript 6 · Tailwind CSS v4 · React Router v7 · lucide-react · Fira Sans (self-hosted) · Supabase (Phase 3) · Cloudflare Pages (deploy).
@@ -26,7 +26,7 @@ npm run lint
 - 1:1 chat: text, presence, typing, sent/delivered/seen
 - Retention: last 5 messages per chat, older deleted daily; media deleted daily regardless
 - Profile pic visible only after acceptance
-- Light/Dark mode with neumorphism (own violet/coral brand system)
+- Light/Dark mode with a neutral, single-accent design system
 - Responsive layout (desktop icon rail + chat, mobile bottom nav + full-screen chat)
 - Free tiers only (Cloudflare Pages + Supabase)
 
