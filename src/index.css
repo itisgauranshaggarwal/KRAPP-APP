@@ -1,0 +1,248 @@
+@import 'tailwindcss';
+
+/* Class-based dark mode (toggled by adding/removing `.dark` on <html>) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+ * KRAPP APP - Design tokens
+ * Style: Neumorphism (soft UI). Light + Dark.
+ * Font: Fira Sans (self-hosted via @fontsource).
+ * ------------------------------------------------------------------------- */
+
+:root {
+  /* Surfaces */
+  --bg: #e5e9f0;
+  --bg-elevated: #e9edf3;
+  --surface: #e5e9f0;
+  --surface-2: #dfe4ec;
+
+  /* Text */
+  --text: #2c313a;
+  --text-muted: #6b7482;
+  --text-faint: #97a0ad;
+
+  /* Brand */
+  --primary: #12a15c;
+  --primary-hover: #0e8b4f;
+  --primary-contrast: #ffffff;
+  --primary-soft: rgba(18, 161, 92, 0.12);
+
+  /* Status */
+  --danger: #e5484d;
+  --danger-soft: rgba(229, 72, 77, 0.12);
+  --warning: #f5a524;
+  --success: #12a15c;
+  --online: #22c55e;
+
+  /* Borders / lines */
+  --border: rgba(44, 49, 58, 0.08);
+  --border-strong: rgba(44, 49, 58, 0.16);
+
+  /* Neumorphic shadow pair */
+  --shadow-light: #ffffff;
+  --shadow-dark: #c2c9d6;
+
+  /* Focus ring */
+  --ring: rgba(18, 161, 92, 0.45);
+
+  /* Bubbles */
+  --bubble-in: #dfe4ec;
+  --bubble-out: #12a15c;
+  --bubble-out-text: #ffffff;
+}
+
+.dark {
+  --bg: #22262d;
+  --bg-elevated: #262b33;
+  --surface: #22262d;
+  --surface-2: #1d2127;
+
+  --text: #e7ebf1;
+  --text-muted: #9aa4b2;
+  --text-faint: #6b7482;
+
+  --primary: #22c55e;
+  --primary-hover: #34d16d;
+  --primary-contrast: #06281a;
+  --primary-soft: rgba(34, 197, 94, 0.16);
+
+  --danger: #f2555a;
+  --danger-soft: rgba(242, 85, 90, 0.16);
+  --warning: #f5a524;
+  --success: #22c55e;
+  --online: #22c55e;
+
+  --border: rgba(231, 235, 241, 0.08);
+  --border-strong: rgba(231, 235, 241, 0.16);
+
+  --shadow-light: #2b313a;
+  --shadow-dark: #171a1f;
+
+  --ring: rgba(34, 197, 94, 0.5);
+
+  --bubble-in: #2b313a;
+  --bubble-out: #12864e;
+  --bubble-out-text: #ffffff;
+}
+
+/* Map CSS variables to Tailwind theme tokens (inline keeps them live per-theme) */
+@theme inline {
+  --font-sans: 'Fira Sans', ui-sans-serif, system-ui, sans-serif;
+
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+
+  --color-text: var(--text);
+  --color-muted: var(--text-muted);
+  --color-faint: var(--text-faint);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-contrast: var(--primary-contrast);
+  --color-primary-soft: var(--primary-soft);
+
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+  --color-online: var(--online);
+
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+
+  --color-bubble-in: var(--bubble-in);
+  --color-bubble-out: var(--bubble-out);
+  --color-bubble-out-text: var(--bubble-out-text);
+
+  --radius-neu: 1.25rem;
+
+  --radius-app: 1rem;
+}
+
+/* Base --------------------------------------------------------------------- */
+
+* {
+  border-color: var(--border);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Fira Sans', ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Theme transition */
+html.theme-ready,
+html.theme-ready body,
+html.theme-ready .theme-transition {
+  transition:
+    background-color 220ms ease,
+    color 220ms ease,
+    box-shadow 220ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.theme-ready,
+  html.theme-ready body,
+  html.theme-ready .theme-transition {
+    transition: none;
+  }
+}
+
+/* Scrollbars -------------------------------------------------------------- */
+
+.scroll-soft {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+.scroll-soft::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.scroll-soft::-webkit-scrollbar-thumb {
+  background-color: var(--border-strong);
+  border-radius: 999px;
+}
+.scroll-soft::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Neumorphic utilities ---------------------------------------------------- */
+
+@utility neu-raised {
+  background-color: var(--surface);
+  box-shadow:
+    6px 6px 12px var(--shadow-dark),
+    -6px -6px 12px var(--shadow-light);
+}
+
+@utility neu-raised-sm {
+  background-color: var(--surface);
+  box-shadow:
+    3px 3px 7px var(--shadow-dark),
+    -3px -3px 7px var(--shadow-light);
+}
+
+@utility neu-raised-lg {
+  background-color: var(--surface);
+  box-shadow:
+    10px 10px 22px var(--shadow-dark),
+    -10px -10px 22px var(--shadow-light);
+}
+
+@utility neu-inset {
+  background-color: var(--surface);
+  box-shadow:
+    inset 4px 4px 8px var(--shadow-dark),
+    inset -4px -4px 8px var(--shadow-light);
+}
+
+@utility neu-inset-sm {
+  background-color: var(--surface);
+  box-shadow:
+    inset 2px 2px 5px var(--shadow-dark),
+    inset -2px -2px 5px var(--shadow-light);
+}
+
+/* Pressable: raised -> inset on active */
+@utility neu-press {
+  background-color: var(--surface);
+  box-shadow:
+    5px 5px 10px var(--shadow-dark),
+    -5px -5px 10px var(--shadow-light);
+  transition:
+    box-shadow 140ms ease,
+    transform 140ms ease;
+}
+.neu-press:active {
+  box-shadow:
+    inset 3px 3px 6px var(--shadow-dark),
+    inset -3px -3px 6px var(--shadow-light);
+  transform: translateY(1px);
+}
+
+/* Soft divider line that works on neumorphic surfaces */
+@utility neu-divider {
+  border-color: transparent;
+  box-shadow:
+    0 1px 0 var(--shadow-light),
+    0 -1px 0 var(--shadow-dark);
+}
+
+/* Focus visibility -------------------------------------------------------- */
+
+:where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
