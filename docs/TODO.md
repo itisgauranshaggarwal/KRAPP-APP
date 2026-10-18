@@ -78,14 +78,14 @@ This is the master todo list. Work in the specified order: UI -> UX -> Realtime 
 - [ ] 3.1.6 Document keys setup in README/DOCS
 
 ### 3.2 Database Schema
-- [ ] 3.2.1 Design tables: users (profile), contacts (friendships with status), conversations (1:1), messages
-- [ ] 3.2.2 Add constraints: unique username, unique (requester, addressee) pair, conversation uniqueness
-- [ ] 3.2.3 Add indexes for performance (common queries)
-- [ ] 3.2.4 Write migration SQL (or use Supabase dashboard) - store SQL in docs/migrations/
-- [ ] 3.2.5 Enable RLS on all tables
-- [ ] 3.2.6 Define RLS policies (users: read own+allowed? contacts visible to involved; messages visible to conversation participants)
-- [ ] 3.2.7 Add created_at/updated_at with defaults
-- [ ] 3.2.8 Document schema in DOCUMENTATION.md (ERD description)
+- [x] 3.2.1 Design tables: profiles, private account profiles, contacts, conversations, messages
+- [x] 3.2.2 Add constraints: unique username, unique contact pair, ordered conversation pair
+- [x] 3.2.3 Add indexes for performance (common queries)
+- [x] 3.2.4 Write migration SQL in `docs/migrations/001_initial_schema.sql`
+- [x] 3.2.5 Enable RLS on all tables
+- [x] 3.2.6 Define RLS policies for profiles, contacts, conversations and messages
+- [x] 3.2.7 Add created_at/updated_at with defaults and update triggers
+- [x] 3.2.8 Document schema in DOCUMENTATION.md (ERD description)
 
 ### 3.3 Auth Integration
 - [ ] 3.3.1 Supabase Auth (email/password) - still username+password login UX; email stored in auth.users

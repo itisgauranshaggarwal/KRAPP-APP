@@ -15,13 +15,14 @@ Repo directory: `E:\KRAPP-APP` (workspace root as per environment).
 
 Also: `.21st/design.json` (design constraints + decisions) and `src/index.css` (the "Quiet Ink" token system) are the references for any visual work.
 
-## 3) Current state (as of end of Session 5)
+## 3) Current state (as of end of Session 6)
 
 - **Phase 1 (UI foundation):** done.
 - **Phase 2 (UX polish & flows):** implemented and verified — route guards, mock session, validation, toasts, loading/empty states, focus trap/a11y, mobile transitions.
 - **Git:** repo exists (`master`). The "Quiet Ink" redesign is committed (`2e857c7`). **Phase 2 code+docs were being committed at the end of Session 5** — run `git log --oneline -3` and `git status` first to see whether that commit landed; commit anything still pending.
 - **Verification status:** `tsc -b` ✅, `npm run build` ✅, `npm run lint` ✅ (clean). Design audit ✅. Functional flow harness: 14/17 on the first run; the 3 failures were harness bugs that were fixed but the confirming re-run was interrupted — **re-run it first thing**.
 - **Nothing is pushed** to a remote yet.
+- **Phase 3 schema foundation:** `docs/migrations/001_initial_schema.sql` defines profiles, private account data, profile media visibility, contact requests, 1:1 conversations, messages, invariants and RLS. Supabase client/auth/realtime wiring is still pending.
 
 ## 4) First steps next session (in order)
 

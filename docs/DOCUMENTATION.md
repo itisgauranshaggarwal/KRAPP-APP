@@ -2,9 +2,9 @@
 
 This document is the single source of truth for session continuity. If you switch sessions, read this entire file first to understand what was done, decisions made, current state, and next steps.
 
-**Last Updated:** 2026-10-17 (Session 2)
+**Last Updated:** 2026-10-18 (Session 6)
 
-**Current Phase:** Phase 1 - Project Setup & UI Foundation (in progress)
+**Current Phase:** Phase 3 - Supabase foundation (schema and RLS complete; auth/realtime pending)
 
 **Status:** Project scaffolded; full mock UI built (auth, chats, requests, contacts, profile) on the "Quiet Ink" design system (neutral surfaces + single petrol accent, light/dark), routing. `tsc -b`, `npm run build`, `npm run lint` and a headless-Chrome UI audit all pass.
 
@@ -110,18 +110,13 @@ Tailwind v4 `@theme inline` maps these to utilities (`bg-surface`, `text-muted`,
 
 ## 6. Database Schema
 
-**Tables (planned):**
-- `users` (profile): id (uuid, matches auth.users), display_name, username (unique), email (unique, editable in Profile), avatar_url, created_at, updated_at, last_seen_at (for presence)
-- `contacts`: id, requester_id, addressee_id, status (pending|accepted|rejected), intro_message_id? or store intro separately, created_at, updated_at
-- `conversations`: id (uuid), user1_id, user2_id, created_at, updated_at (1:1; enforce uniqueness)
-- `messages`: id, conversation_id, sender_id, type (text|image|voice|file), content, media_url, media_metadata (jsonb), is_intro (bool), read_by (json/array or separate receipts), created_at, deleted_at? (or hard delete on purge)
-
-**Constraints:** unique(username), unique(requester_id, addressee_id), unique conversation pair (user1<user2 or ordered).  
-**Indexes:** conversation_id+created_at, sender_id, recipient-related.
-
-**RLS:** All tables - define per action (select/insert/update/delete) based on participation.
-
-Full schema SQL and policies will be added in Phase 3.2.
+**Implemented migration:** `docs/migrations/001_initial_schema.sql`
+- `profiles` stores discoverable identity and presence fields; `account_profiles` isolates email behind self-only RLS; `profile_media` isolates avatars so they are visible only to the owner or accepted contacts.
+- `contact_requests` stores one optional intro message and enforces one request pair in either direction.
+- `conversations` stores an ordered participant pair, making 1:1 uniqueness database-enforced.
+- `messages` stores text/media metadata, status and `is_intro`; a trigger prevents non-participants, non-accepted contacts and invalid intro messages.
+- All tables have RLS. Profile discovery is authenticated-only; account email is self-only; contacts, conversations and messages are participant-scoped.
+- The schema uses ordered UUID pairs and lower-case unique indexes so username/email lookup is case-insensitive without requiring `citext`.
 
 ## 7. API Contracts / Data Shapes
 
@@ -143,7 +138,7 @@ To be filled during implementation.
 - **Profile edit / sign out / delete account** all go through `useSession()`; identity is derived from the session in `AppDataProvider`, so the app reflects the signed-in account.
 - `MOCK_AUTH` flag = temporary; the dev-only "demo build" hint on `/login` disappears in production builds.
 
-**Phase 3 (planned):** Supabase Auth with email+password. Because the UI is username+password, resolve `username → email` first, then sign in. Session via `onAuthStateChange`. Signup creates the auth user plus a `users` profile row (username uniqueness enforced here). Delete account cascades profile + auth user. Replace the mock function bodies; keep the same `useSession()` surface so pages and guards don't change.
+**Phase 3 (next):** Supabase Auth with email+password. Because the UI is username+password, resolve `username → email` through a narrowly scoped server-side RPC/Edge Function, then sign in. Session via `onAuthStateChange`. Signup creates the auth user plus `profiles` and `account_profiles` rows. Delete account cascades profile data; deleting `auth.users` requires a trusted Edge Function because the anon key must never receive service-role access. Replace the mock function bodies; keep the same `useSession()` surface so pages and guards don't change.
 
 ## 9. Contacts & Invite Flow
 
@@ -247,8 +242,10 @@ src/
 
 ## 14. TODO / Next Steps
 
+The schema and RLS foundation is now in `docs/migrations/001_initial_schema.sql`. Apply it to a Supabase project before client wiring. The next implementation step is the Supabase client, username-to-email auth resolution, and replacing mock provider internals while preserving the current UI contracts.
+
 **Immediate next step:**
-Phase 2 is implemented and verified (`tsc -b`, `npm run build`, `npm run lint`, design audit, guards). Re-run the functional flow harness (`flow.mjs`) to confirm all checks green, get the user's visual sign-off on the live dev server, then begin **Phase 3 (Supabase + realtime)** per TODO.md.
+Apply `docs/migrations/001_initial_schema.sql` to a Supabase project. Then add the Supabase client, implement username-to-email auth resolution, and replace the mock provider internals while preserving the existing UI contracts. The mock mode remains active until those credentials and migrations are available.
 
 ## 15. Decisions Log
 
@@ -318,6 +315,12 @@ Use this section to record every significant decision with rationale, date, and 
 - Lint is kept clean by three targeted `eslint-disable-next-line react/only-export-components` comments (provider + hook in the same file: `theme.tsx`, `session.tsx`, `AppDataProvider.tsx`). Splitting hooks into separate modules is the cleaner long-term fix.
 
 ## 17. Session Log
+
+**Session 6 (2026-10-18) — Project audit and Phase 3 schema foundation**
+- Re-read the project Markdown docs, `.21st/design.json`, `.21st/DESIGN.md`, and the source tree.
+- Confirmed Phase 1 and Phase 2 are implemented in code; corrected the stale current-phase label at the top of this document.
+- Added `docs/migrations/001_initial_schema.sql` with profiles, private account data, contact requests, conversations, messages, constraints, indexes, triggers and RLS policies.
+- Marked Phase 3.2 complete in `docs/TODO.md`; the remaining dependency is a real Supabase project and credentials.
 
 **Session 1 (2025-10-16)**
 - User provided detailed requirements (all questions answered).
