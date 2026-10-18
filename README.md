@@ -1,5 +1,7 @@
 # KRAPP APP
 
+**Current status:** Supabase Auth/data wiring, realtime text messaging, unread/read state, typing, presence, legal pages, error recovery and the text-only MVP scope are implemented. Remaining work is live-project verification, retention scheduling, deployment, and device QA.
+
 Simple 1:1 chat app with username-based invites, realtime messaging, light/dark mode, and a quiet, product-grade interface. Built as a free-tier-only hobby project.
 
 ## Project Status

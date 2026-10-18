@@ -1,6 +1,6 @@
 # KRAPP APP - TODO List
 
-This is the master todo list. Work in the specified order: UI -> UX -> Realtime Texting -> Media/Extras. Update this file as we progress (mark [x] when done). This file is part of session continuity.
+This is the master todo list. Current MVP scope is UI -> UX -> realtime 1:1 text -> deployment. Media, calls, files and voice notes are intentionally excluded from the product vision.
 
 ## Phase 1: Project Setup & UI Foundation
 **Goal:** Initialize project, establish design system, build static/mock UI (no backend wiring yet).
@@ -73,8 +73,8 @@ This is the master todo list. Work in the specified order: UI -> UX -> Realtime 
 - [ ] 3.1.1 Create Supabase project (free tier)
 - [ ] 3.1.2 Get API keys (anon, service role if needed later) and URL
 - [x] 3.1.3 Configure environment variable template (`.env.example`) and typed runtime boundary (`src/lib/supabase-config.ts`)
-- [ ] 3.1.4 Install Supabase JS client
-- [ ] 3.1.5 Test connection
+- [x] 3.1.4 Install Supabase JS client
+- [~] 3.1.5 Test connection (client path builds; live project verification remains)
 - [x] 3.1.6 Document keys setup in README/DOCS
 
 ### 3.2 Database Schema
@@ -93,45 +93,43 @@ This is the master todo list. Work in the specified order: UI -> UX -> Realtime 
 - [x] 3.3.3 Enforce username uniqueness (check before signup; handle collision)
 - [~] 3.3.4 Signin with username+password (lookup username->email or use custom auth; document approach)
 - [~] 3.3.5 Session persistence (onAuthStateChange)
-- [ ] 3.3.6 Route guards based on auth state
-- [ ] 3.3.7 Edit profile: update display_name, username (check unique), avatar_url
-- [ ] 3.3.8 Delete account: delete profile + auth user (handle cascades)
-- [ ] 3.3.9 Allow email updates (with validation + uniqueness check)
+- [x] 3.3.6 Route guards based on auth state
+- [~] 3.3.7 Edit profile: display_name, username and bio update; real avatar storage remains
+- [~] 3.3.8 Delete account: Edge Function scaffolded; deployment remains
+- [~] 3.3.9 Allow email updates (implemented; Supabase confirmation behavior depends on project settings)
 
 ### 3.4 Contacts System
-- [ ] 3.4.1 Search user by username (exact or startswith? document; keep simple)
-- [ ] 3.4.2 Send invite: create contact record (status pending), allow single intro message stored? (where - in messages with flag or just create first message marked as intro)
-- [ ] 3.4.3 Intro message: sender can send 1 msg at invite time; visible before accept
-- [ ] 3.4.4 List pending received/sent
-- [ ] 3.4.5 Accept/Reject: update contact status
-- [ ] 3.4.6 Create conversation on accept (or ensure exists)
-- [ ] 3.4.7 Contact list (accepted only)
-- [ ] 3.4.8 Profile pic visibility: only after acceptance (enforce in UI + consider RLS)
-- [ ] 3.4.9 Delete conversation (soft/hard; affects messages)
+- [x] 3.4.1 Search user by username/display name
+- [x] 3.4.2 Send invite with request-only optional introduction
+- [x] 3.4.3 Keep introduction on the pending request; no pre-acceptance chat message
+- [x] 3.4.4 List pending received/sent
+- [x] 3.4.5 Accept/Reject: update contact status
+- [x] 3.4.6 Create conversation after acceptance
+- [x] 3.4.7 Contact list (accepted only)
+- [x] 3.4.8 Profile visibility rules and accepted-contact RLS
+- [x] 3.4.9 Delete conversation and messages
 
 ### 3.5 Realtime Messaging
-- [ ] 3.5.1 Conversation creation/joining logic
-- [ ] 3.5.2 Send text message (after accept; intro msg allowed pre-accept by sender only once)
-- [ ] 3.5.3 Receive messages in realtime (Supabase Realtime subscription per conversation)
-- [ ] 3.5.4 Message ordering by created_at
-- [ ] 3.5.5 Presence: online/offline (track last seen or presence channel)
-- [ ] 3.5.6 Typing indicators (emit typing state on input)
-- [ ] 3.5.7 Message status: sent/delivered/seen (update on read)
-- [ ] 3.5.8 Chat list: show last message preview, unread count (basic), presence dot
-- [ ] 3.5.9 Auto-scroll to bottom on new message
-- [ ] 3.5.10 Load message history (respect "last 5" retention concept; for active chats show recent; implement retention)
-- [ ] 3.5.11 Daily cleanup: implement strategy for deleting messages older than keeping last 5 per chat (cron/edge function). Document approach and schedule
-- [ ] 3.5.12 Handle network/reconnects gracefully
+- [x] 3.5.1 Conversation creation/joining logic
+- [x] 3.5.2 Send text message after acceptance
+- [x] 3.5.3 Receive messages in realtime (Supabase Realtime subscription)
+- [x] 3.5.4 Message ordering by created_at
+- [~] 3.5.5 Presence: online/offline (active conversation presence channel implemented; persistent last-seen refinement remains)
+- [x] 3.5.6 Typing indicators (conversation broadcast)
+- [~] 3.5.7 Message status: sent/delivered/seen (seen acknowledgements implemented; delivered/reconnect refinement remains)
+- [x] 3.5.8 Chat list: show last message preview, unread count (basic), presence dot
+- [x] 3.5.9 Auto-scroll to bottom on new message
+- [x] 3.5.10 Load message history (current snapshot loads retained conversation history)
+- [~] 3.5.11 Daily cleanup: retention function implemented; schedule it with Supabase Cron
+- [~] 3.5.12 Handle network/reconnects gracefully (visible warnings and Supabase channel recovery; full offline queue remains)
 
-### 3.6 Storage/Media Foundations (Phase 3 prep)
-- [ ] 3.6.1 Plan storage buckets (images, voice-notes, files) - choose Supabase Storage vs R2; document choice
-- [ ] 3.6.2 Define media deletion policy (delete media files regardless of 5-msg rule)
-- [ ] 3.6.3 RLS for storage objects (if Supabase Storage)
+### 3.6 Storage/Media Foundations
+Not applicable to the current text-only MVP vision.
 
 **Phase 3 Done When:** Auth, contacts, 1:1 realtime text fully functional with presence/typing/read receipts. Retention policy implemented or scheduled.
 
-## Phase 4: Media (Voice Notes, Images, Files)
-**Goal:** Add media support respecting storage constraints.
+## Phase 4: Media (Removed From Current Vision)
+Media, calls, voice notes and file attachments are intentionally not part of KRAPP's current MVP. Keep the following items archived rather than implementing them.
 
 - [ ] 4.1 Image upload: select/compress, preview before send, upload to storage
 - [ ] 4.2 Image display in messages (thumbnails, full view modal)
@@ -151,23 +149,23 @@ This is the master todo list. Work in the specified order: UI -> UX -> Realtime 
 ## Phase 5: Polish, Deployment, Safety & Docs
 **Goal:** Finalize MVP for deployment, polish the UI (light/dark consistency), add safety notice, complete docs.
 
-- [ ] 5.1 Safety notice implemented and visible (login/signup/footer per choice)
+- [x] 5.1 Safety notice implemented and visible
 - [ ] 5.2 Design audit across all screens (light/dark) — extend the CDP audit, add contrast/layout checks to CI if practical
 - [ ] 5.3 Mobile UX audit (gestures, back nav, keyboard)
 - [ ] 5.4 Desktop UX audit (split view behavior)
 - [ ] 5.5 Performance: lazy load routes, optimize images
-- [ ] 5.6 Error boundaries
-- [ ] 5.7 Empty/loading states everywhere
-- [ ] 5.8 Delete account flow fully tested
-- [ ] 5.9 Delete conversation flow tested
-- [ ] 5.10 Retention cleanup tested (logic + schedule)
-- [ ] 5.11 Environment variables: .env.example complete
-- [ ] 5.12 Build: `npm run build` succeeds
+- [x] 5.6 Error boundaries
+- [x] 5.7 Empty/loading states across core flows
+- [~] 5.8 Delete account flow fully tested (client + Edge Function scaffolded; deployment remains)
+- [x] 5.9 Delete conversation flow implemented
+- [~] 5.10 Retention cleanup implemented (schedule and live database test remain)
+- [x] 5.11 Environment variables: `.env.example` complete
+- [x] 5.12 Build: `npm run build` succeeds
 - [ ] 5.13 Deploy to Cloudflare Pages (configure project, env vars)
 - [ ] 5.14 Test on mobile device (real) and desktop
 - [ ] 5.15 Update README.md with setup, deploy, features
 - [ ] 5.16 Update DOCUMENTATION.md with all implementation details, decisions, schema, RLS, flows
-- [ ] 5.17 Update PRD.md if any scope adjustments made (with rationale)
+- [x] 5.17 Update PRD.md if any scope adjustments made (with rationale)
 - [ ] 5.18 Add SESSION_LOG to DOCUMENTATION.md
 - [ ] 5.19 Final pass: no TODOs left for MVP features; document known issues if any
 

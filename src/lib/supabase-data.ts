@@ -39,12 +39,18 @@ interface MessageRow {
   created_at: string
 }
 
+interface ReadStateRow {
+  conversation_id: string
+  last_read_at: string
+}
+
 export interface SupabaseSnapshot {
   contacts: Contact[]
   incomingRequests: Contact[]
   outgoingRequests: Contact[]
   conversations: Conversation[]
   messages: Record<string, Message[]>
+  readAtByConversation: Record<string, string>
 }
 
 function requireSupabase() {
@@ -84,8 +90,11 @@ function toMessage(row: MessageRow): Message {
 
 export async function fetchAppSnapshot(currentUserId: string): Promise<SupabaseSnapshot> {
   const client = requireSupabase()
-  const [{ data: contactRows, error: contactError }, { data: conversationRows, error: conversationError }] =
-    await Promise.all([
+  const [
+    { data: contactRows, error: contactError },
+    { data: conversationRows, error: conversationError },
+    { data: readStateRows, error: readStateError },
+  ] = await Promise.all([
       client
         .from('contact_requests')
         .select('id, requester_id, addressee_id, status, intro_message, created_at')
@@ -95,13 +104,29 @@ export async function fetchAppSnapshot(currentUserId: string): Promise<SupabaseS
         .select('id, participant_one_id, participant_two_id, created_at, updated_at')
         .or(`participant_one_id.eq.${currentUserId},participant_two_id.eq.${currentUserId}`)
         .order('updated_at', { ascending: false }),
+      client
+        .from('conversation_read_states')
+        .select('conversation_id, last_read_at')
+        .eq('user_id', currentUserId),
     ])
 
   if (contactError) throw contactError
   if (conversationError) throw conversationError
+  if (readStateError) throw readStateError
 
   const contacts = (contactRows ?? []) as ContactRow[]
-  const conversations = (conversationRows ?? []) as ConversationRow[]
+  const acceptedUserIds = new Set(
+    contacts
+      .filter((contact) => contact.status === 'accepted')
+      .map((contact) => otherUserId(contact, currentUserId)),
+  )
+  const conversations = ((conversationRows ?? []) as ConversationRow[]).filter((conversation) => {
+    const otherParticipant =
+      conversation.participant_one_id === currentUserId
+        ? conversation.participant_two_id
+        : conversation.participant_one_id
+    return acceptedUserIds.has(otherParticipant)
+  })
   const conversationIds = conversations.map((conversation) => conversation.id)
   const userIds = new Set<string>([currentUserId])
 
@@ -181,6 +206,9 @@ export async function fetchAppSnapshot(currentUserId: string): Promise<SupabaseS
       }
     })
     .filter(Boolean) as Conversation[]
+  const readAtByConversation = Object.fromEntries(
+    ((readStateRows ?? []) as ReadStateRow[]).map((row) => [row.conversation_id, row.last_read_at]),
+  )
 
   return {
     contacts: accepted,
@@ -188,6 +216,7 @@ export async function fetchAppSnapshot(currentUserId: string): Promise<SupabaseS
     outgoingRequests,
     conversations: mappedConversations,
     messages: messagesByConversation,
+    readAtByConversation,
   }
 }
 

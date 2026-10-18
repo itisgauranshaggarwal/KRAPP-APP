@@ -11,7 +11,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import { useRef, useState, type ChangeEvent, type ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { PageHeader } from '@/components/layout/PageHeader'
 import { SafetyNotice } from '@/components/shared/SafetyNotice'
@@ -136,9 +136,9 @@ export function ProfilePage() {
       <PageHeader title="Profile" subtitle={`@${currentUser.username}`} />
 
       <div className="flex-1 overflow-y-auto scroll-soft">
-        <div className="mx-auto flex max-w-2xl flex-col gap-5 px-4 py-5 pb-24 lg:pb-8">
+        <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-4 pb-24 lg:pb-8">
           {/* Identity */}
-          <section className="rounded-xl border border-line bg-surface p-5">
+          <section className="rounded-xl border border-line bg-surface p-4">
             <div className="flex items-start gap-4">
               <Avatar
                 name={currentUser.displayName}
@@ -182,33 +182,35 @@ export function ProfilePage() {
 
           {/* Account */}
           <Section title="Account" subtitle="How friends find and recognise you">
-            <Input
-              label="Display name"
-              value={displayName}
-              maxLength={40}
-              onChange={(e) => setDisplayName(e.target.value)}
-              error={errors.displayName}
-            />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Input
+                label="Display name"
+                value={displayName}
+                maxLength={40}
+                onChange={(e) => setDisplayName(e.target.value)}
+                error={errors.displayName}
+              />
 
-            <Input
-              label="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value.toLowerCase())}
-              error={errors.username}
-              hint="Friends add you with this."
-              leadingIcon={<AtSign className="size-4" />}
-            />
+              <Input
+                label="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value.toLowerCase())}
+                error={errors.username}
+                hint="Friends add you with this."
+                leadingIcon={<AtSign className="size-4" />}
+              />
 
-            <Input
-              label="Email"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              error={errors.email}
-              hint="Used for your account only. Never shown to other people."
-              leadingIcon={<Mail className="size-4" />}
-            />
+              <Input
+                label="Email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                error={errors.email}
+                hint="Used for your account only. Never shown to other people."
+                leadingIcon={<Mail className="size-4" />}
+              />
+            </div>
 
             <div>
               <label
@@ -296,6 +298,14 @@ export function ProfilePage() {
           {/* About */}
           <Section title="About" icon={Info} subtitle="KRAPP APP · v0.1.0 · Phase 2 (UX)">
             <SafetyNotice />
+            <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+              <Link to="/terms" className="text-primary hover:underline">
+                Terms of service
+              </Link>
+              <Link to="/privacy" className="text-primary hover:underline">
+                Privacy policy
+              </Link>
+            </div>
           </Section>
 
           {/* Danger zone */}
@@ -341,19 +351,22 @@ function Section({
   subtitle,
   icon: Icon,
   danger = false,
+  className,
   children,
 }: {
   title: string
   subtitle?: string
   icon?: typeof Info
   danger?: boolean
+  className?: string
   children: ReactNode
 }) {
   return (
     <section
       className={cn(
-        'flex flex-col gap-4 rounded-xl border bg-surface p-5',
+        'flex flex-col gap-3 rounded-xl border bg-surface p-4',
         danger ? 'border-danger/30' : 'border-line',
+        className,
       )}
     >
       <div>

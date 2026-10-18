@@ -1,4 +1,4 @@
-import { Mic, Paperclip, SendHorizontal, Smile } from 'lucide-react'
+import { SendHorizontal } from 'lucide-react'
 import { useRef, useState, type KeyboardEvent } from 'react'
 
 import { IconButton } from '@/components/ui/IconButton'
@@ -55,21 +55,7 @@ export function MessageInput({
   return (
     <div className={cn('border-t border-line bg-surface px-3 py-2.5 sm:px-6', className)}>
       <div className="mx-auto flex max-w-3xl items-end gap-2">
-        {/* Media actions arrive in Phase 4. */}
-        <IconButton
-          label="Attach a file"
-          variant="ghost"
-          className="hidden sm:inline-flex"
-          disabled={disabled}
-        >
-          <Paperclip className="size-5" />
-        </IconButton>
-
         <div className="flex flex-1 items-end gap-1 rounded-lg border border-line-strong bg-surface px-1.5 py-1 transition-[border-color,box-shadow] duration-100 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary-soft">
-          <IconButton label="Emoji" size="sm" variant="ghost" className="mb-0.5">
-            <Smile className="size-5" />
-          </IconButton>
-
           <textarea
             ref={textareaRef}
             rows={1}
@@ -91,26 +77,15 @@ export function MessageInput({
           />
         </div>
 
-        {hasText ? (
-          <IconButton
-            label="Send message"
-            variant="primary"
-            className="animate-fade"
-            onClick={submit}
-            disabled={disabled}
-          >
-            <SendHorizontal className="size-5" />
-          </IconButton>
-        ) : (
-          <IconButton
-            label="Hold to record a voice note"
-            variant="ghost"
-            disabled={disabled}
-            title="Voice notes arrive in a later update"
-          >
-            <Mic className="size-5" />
-          </IconButton>
-        )}
+        <IconButton
+          label="Send message"
+          variant="primary"
+          className="mb-1"
+          onClick={submit}
+          disabled={disabled || !hasText}
+        >
+          <SendHorizontal className="size-5" />
+        </IconButton>
       </div>
     </div>
   )

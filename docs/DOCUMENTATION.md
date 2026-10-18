@@ -4,9 +4,9 @@ This document is the single source of truth for session continuity. If you switc
 
 **Last Updated:** 2026-10-18 (Session 6)
 
-**Current Phase:** Phase 3 - Supabase foundation (schema and RLS complete; auth/realtime pending)
+**Current Phase:** Phase 3/5 - Supabase realtime MVP and deployment readiness
 
-**Status:** Project scaffolded; full mock UI built (auth, chats, requests, contacts, profile) on the "Quiet Ink" design system (neutral surfaces + single petrol accent, light/dark), routing. `tsc -b`, `npm run build`, `npm run lint` and a headless-Chrome UI audit all pass.
+**Status:** Quiet Ink UI, Supabase Auth/data wiring, RLS migrations, realtime text messaging, unread/read state, typing/presence, error recovery, legal pages and text-only product scope are implemented. `npm run build` and `npm run lint` pass; deployment and live-project verification remain.
 
 ## Table of Contents
 

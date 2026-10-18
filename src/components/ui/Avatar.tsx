@@ -27,7 +27,7 @@ export interface AvatarProps {
   username?: string
   src?: string | null
   size?: Size
-  /** `icon` = silhouette fallback (default), `initials` = colored letters. */
+  /** `initials` = first letters fallback (default), `icon` = silhouette. */
   fallback?: Fallback
   online?: boolean
   className?: string
@@ -38,7 +38,7 @@ export function Avatar({
   username,
   src,
   size = 'md',
-  fallback = 'icon',
+  fallback = 'initials',
   online = false,
   className,
 }: AvatarProps) {

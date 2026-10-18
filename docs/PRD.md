@@ -103,13 +103,12 @@ Account deletion: **Delete Account** option available in profile/settings.
 - **1:1 only** for MVP (no group chats).
 
 ### Conversation Rules
-- Conversation exists conceptually when contact is accepted.
+- Conversation exists only after the contact is accepted.
 - Before acceptance: only sender’s single intro message is visible to recipient; no further messages.
-- After acceptance: bidirectional realtime messaging allowed.
+- After acceptance: bidirectional realtime text messaging allowed.
 
-### Message Types (Phased)
-- **Phase 3 (MVP focus)**: Text messages only. Validate and stabilize before adding media.
-- **Phase 4 (later)**: Voice notes, images, files.
+### Message Types
+- **MVP:** Text messages only. Voice notes, images and files are intentionally excluded.
 
 ### Message Features (Realtime)
 - **Online/Offline presence**

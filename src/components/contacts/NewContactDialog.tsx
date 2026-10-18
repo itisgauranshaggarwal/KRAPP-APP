@@ -126,7 +126,6 @@ export function NewContactDialog() {
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value)
-                  setResults(null)
                   setQueryError(null)
                 }}
                 placeholder="username"
@@ -144,7 +143,7 @@ export function NewContactDialog() {
               </Button>
             </form>
 
-            <div className="mt-4">
+            <div className="mt-4 min-h-32">
               {searching ? (
                 <SkeletonRows rows={3} />
               ) : results === null ? (

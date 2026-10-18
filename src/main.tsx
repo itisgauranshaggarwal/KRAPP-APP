@@ -9,6 +9,7 @@ import '@fontsource/fira-sans/600.css'
 import '@fontsource/fira-sans/700.css'
 
 import { App } from '@/App'
+import { AppErrorBoundary } from '@/components/layout/AppErrorBoundary'
 import { SessionProvider } from '@/lib/session'
 import { ThemeProvider } from '@/lib/theme'
 import { AppDataProvider } from '@/store/AppDataProvider'
@@ -19,9 +20,11 @@ createRoot(document.getElementById('root')!).render(
     <ThemeProvider>
       <SessionProvider>
         <AppDataProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
+          <AppErrorBoundary>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </AppErrorBoundary>
         </AppDataProvider>
       </SessionProvider>
     </ThemeProvider>

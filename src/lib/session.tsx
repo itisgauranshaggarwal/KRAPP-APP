@@ -129,9 +129,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }
 
     let mounted = true
+    const client = supabase
 
     async function hydrate() {
-      const { data, error } = await supabase.auth.getSession()
+      const { data, error } = await client.auth.getSession()
       if (error) throw error
       const nextUser = data.session ? await loadSupabaseUser(data.session.user.id) : null
       if (mounted) {
@@ -220,7 +221,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       })
       if (error || !data.user) throw new Error(error?.message ?? 'Unable to create account.')
       if (!data.session) {
-        throw new Error('Account created. Confirm your email, then sign in.')
+        throw new Error(
+          'Account created, but no session was returned. Turn off email confirmation in Supabase Auth settings.',
+        )
       }
 
       const next = await loadSupabaseUser(data.user.id)

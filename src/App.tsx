@@ -11,6 +11,7 @@ import { ProfilePage } from '@/pages/app/ProfilePage'
 import { RequestsPage } from '@/pages/app/RequestsPage'
 import { LoginPage } from '@/pages/auth/LoginPage'
 import { SignupPage } from '@/pages/auth/SignupPage'
+import { PrivacyPage, TermsPage } from '@/pages/legal/LegalPage'
 
 export function App() {
   return (
@@ -33,6 +34,8 @@ export function App() {
             </RequireGuest>
           }
         />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
 
         {/* App (signed-in) */}
         <Route
@@ -53,8 +56,9 @@ export function App() {
           <Route path="contacts" element={<ContactsPage />} />
           <Route path="profile" element={<ProfilePage />} />
 
-          <Route path="*" element={<NotFoundPage />} />
         </Route>
+
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
 
       <ToastViewport />

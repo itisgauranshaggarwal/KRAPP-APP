@@ -38,8 +38,8 @@ interface AppData {
   sendInvite: (user: User, introMessage?: string) => Promise<void>
   acceptRequest: (requestId: string) => Promise<void>
   rejectRequest: (requestId: string) => Promise<void>
-  /** Optimistic + instant: matches how the realtime send will feel. */
-  sendMessage: (conversationId: string, content: string) => void
+  /** Persists a message and refreshes the active data snapshot. */
+  sendMessage: (conversationId: string, content: string) => Promise<void>
   /** Get-or-create the 1:1 conversation with a contact. */
   openConversationWith: (user: User) => Promise<string>
   markConversationRead: (conversationId: string) => void
@@ -56,6 +56,43 @@ const wait = (ms = LATENCY_MS) => new Promise<void>((resolve) => window.setTimeo
 
 let idCounter = 1000
 const nextId = (prefix: string) => `${prefix}-${++idCounter}`
+const READ_STATE_PREFIX = 'krapp.read.'
+
+function readStateFor(userId: string): Record<string, string> {
+  try {
+    const stored = localStorage.getItem(`${READ_STATE_PREFIX}${userId}`)
+    if (!stored) return {}
+    const parsed: unknown = JSON.parse(stored)
+    return parsed && typeof parsed === 'object' ? (parsed as Record<string, string>) : {}
+  } catch {
+    return {}
+  }
+}
+
+function writeReadState(userId: string, conversationId: string) {
+  const next = { ...readStateFor(userId), [conversationId]: new Date().toISOString() }
+  try {
+    localStorage.setItem(`${READ_STATE_PREFIX}${userId}`, JSON.stringify(next))
+  } catch {
+    /* Read state is a convenience; chat remains usable if storage is unavailable. */
+  }
+}
+
+function withUnreadCounts(
+  conversations: Conversation[],
+  messages: Record<string, Message[]>,
+  userId: string,
+  serverReadState: Record<string, string> = {},
+) {
+  const readState = { ...readStateFor(userId), ...serverReadState }
+  return conversations.map((conversation) => {
+    const readAt = readState[conversation.id] ? Date.parse(readState[conversation.id]) : 0
+    const unreadCount = (messages[conversation.id] ?? []).filter(
+      (message) => message.senderId !== userId && Date.parse(message.createdAt) > readAt,
+    ).length
+    return { ...conversation, unreadCount }
+  })
+}
 
 export function AppDataProvider({ children }: { children: ReactNode }) {
   const { user: sessionUser } = useSession()
@@ -85,16 +122,24 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!isSupabaseMode || !sessionUser?.id) return
+    const userId = sessionUser.id
     let mounted = true
 
-    void fetchAppSnapshot(sessionUser.id)
+    void fetchAppSnapshot(userId)
       .then((snapshot) => {
         if (!mounted) return
         setContacts(snapshot.contacts)
         setIncomingRequests(snapshot.incomingRequests)
         setOutgoingRequests(snapshot.outgoingRequests)
-        setConversations(snapshot.conversations)
         setMessages(snapshot.messages)
+        setConversations(
+          withUnreadCounts(
+            snapshot.conversations,
+            snapshot.messages,
+            userId,
+            snapshot.readAtByConversation,
+          ),
+        )
         setIsReady(true)
       })
       .catch(() => {
@@ -130,9 +175,40 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     setContacts(snapshot.contacts)
     setIncomingRequests(snapshot.incomingRequests)
     setOutgoingRequests(snapshot.outgoingRequests)
-    setConversations(snapshot.conversations)
     setMessages(snapshot.messages)
+    setConversations(
+      withUnreadCounts(
+        snapshot.conversations,
+        snapshot.messages,
+        sessionUser.id,
+        snapshot.readAtByConversation,
+      ),
+    )
   }, [sessionUser?.id])
+
+  useEffect(() => {
+    if (!isSupabaseMode || !supabase || !sessionUser?.id) return
+    const client = supabase
+
+    const channel = client
+      .channel(`krapp-app:${sessionUser.id}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'messages' },
+        () => void refreshSupabaseData(),
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'contact_requests' },
+        () => void refreshSupabaseData(),
+      )
+
+    void channel.subscribe()
+
+    return () => {
+      void client.removeChannel(channel)
+    }
+  }, [sessionUser?.id, refreshSupabaseData])
 
   const searchUsers = useCallback(
     async (query: string): Promise<User[]> => {
@@ -243,30 +319,6 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         .single()
       if (requestError || !request) throw requestError ?? new Error('Invite could not be sent.')
 
-      if (cleanIntro) {
-        const [firstParticipant, secondParticipant] = [currentUser.id, user.id].sort()
-        const { data: conversation, error: conversationError } = await supabase
-          .from('conversations')
-          .upsert(
-            { participant_one_id: firstParticipant, participant_two_id: secondParticipant },
-            { onConflict: 'participant_one_id,participant_two_id' },
-          )
-          .select('id')
-          .single()
-        if (conversationError || !conversation) {
-          throw conversationError ?? new Error('Invite conversation could not be created.')
-        }
-
-        const { error: messageError } = await supabase.from('messages').insert({
-          conversation_id: conversation.id,
-          sender_id: currentUser.id,
-          type: 'text',
-          content: cleanIntro,
-          is_intro: true,
-        })
-        if (messageError) throw messageError
-      }
-
       await refreshSupabaseData()
       return
     }
@@ -284,45 +336,26 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
   }, [currentUser.id, refreshSupabaseData])
 
   const sendMessage = useCallback(
-    (conversationId: string, content: string) => {
+    async (conversationId: string, content: string) => {
       const text = content.trim()
       if (!text) return
 
       const conversation = conversations.find((item) => item.id === conversationId)
       if (!conversation) return
+      if (!contacts.some((item) => item.user.id === conversation.user.id && item.status === 'accepted')) {
+        return
+      }
 
       if (isSupabaseMode) {
         if (!supabase) return
-        const message: Message = {
-          id: nextId('optimistic'),
-          conversationId,
-          senderId: currentUser.id,
-          type: 'text',
-          content: text,
-          status: 'sent',
-          createdAt: new Date().toISOString(),
-        }
-
-        setMessages((prev) => ({
-          ...prev,
-          [conversationId]: [...(prev[conversationId] ?? []), message],
-        }))
-        setConversations((prev) =>
-          prev
-            .map((item) =>
-              item.id === conversationId
-                ? { ...item, lastMessage: message, updatedAt: message.createdAt }
-                : item,
-            )
-            .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
-        )
-
-        void supabase.from('messages').insert({
+        const { error } = await supabase.from('messages').insert({
           conversation_id: conversationId,
           sender_id: currentUser.id,
           type: 'text',
           content: text,
         })
+        if (error) throw error
+        await refreshSupabaseData()
         return
       }
 
@@ -350,7 +383,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
           .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
       )
     },
-    [conversations, currentUser.id],
+    [contacts, conversations, currentUser.id, refreshSupabaseData],
   )
 
   const openConversationWith = useCallback(
@@ -387,10 +420,30 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
   )
 
   const markConversationRead = useCallback((conversationId: string) => {
+    if (sessionUser?.id) writeReadState(sessionUser.id, conversationId)
+    if (isSupabaseMode && supabase && sessionUser?.id) {
+      void supabase.from('conversation_read_states').upsert({
+        user_id: sessionUser.id,
+        conversation_id: conversationId,
+        last_read_at: new Date().toISOString(),
+      })
+      void supabase
+        .from('messages')
+        .update({ status: 'seen' })
+        .eq('conversation_id', conversationId)
+        .neq('sender_id', sessionUser.id)
+        .neq('status', 'seen')
+    }
+    setMessages((prev) => ({
+      ...prev,
+      [conversationId]: (prev[conversationId] ?? []).map((message) =>
+        message.senderId === currentUser.id ? message : { ...message, status: 'seen' },
+      ),
+    }))
     setConversations((prev) =>
       prev.map((item) => (item.id === conversationId ? { ...item, unreadCount: 0 } : item)),
     )
-  }, [])
+  }, [currentUser.id, sessionUser?.id])
 
   const deleteConversation = useCallback(async (conversationId: string) => {
     if (isSupabaseMode) {

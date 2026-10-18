@@ -15,7 +15,7 @@ export const currentUser: User = {
   displayName: 'Alex Rivera',
   email: 'alex@krapp.app',
   avatarUrl: null,
-  bio: 'Just here to chat 🎧 · gaming & music',
+  bio: 'Hi There!',
   online: true,
   lastSeenAt: new Date().toISOString(),
 }

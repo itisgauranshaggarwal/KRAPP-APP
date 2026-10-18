@@ -36,8 +36,13 @@ export function Modal({
   className,
 }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null)
+  const onCloseRef = useRef(onClose)
   const titleId = useId()
   const descriptionId = useId()
+
+  useEffect(() => {
+    onCloseRef.current = onClose
+  }, [onClose])
 
   // Escape to close, Tab trapped inside the dialog, focus restored on close.
   useEffect(() => {
@@ -53,7 +58,7 @@ export function Modal({
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.stopPropagation()
-        onClose()
+        onCloseRef.current()
         return
       }
       if (event.key !== 'Tab') return
@@ -96,7 +101,7 @@ export function Modal({
       window.clearTimeout(focusTimer)
       previouslyFocused?.focus?.()
     }
-  }, [open, onClose])
+  }, [open])
 
   if (!open) return null
 
