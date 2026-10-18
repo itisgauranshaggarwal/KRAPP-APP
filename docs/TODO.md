@@ -88,11 +88,11 @@ This is the master todo list. Work in the specified order: UI -> UX -> Realtime 
 - [x] 3.2.8 Document schema in DOCUMENTATION.md (ERD description)
 
 ### 3.3 Auth Integration
-- [ ] 3.3.1 Supabase Auth (email/password) - still username+password login UX; email stored in auth.users
-- [ ] 3.3.2 Signup: create auth user, create profile row (display_name, username, email, avatar_url null)
-- [ ] 3.3.3 Enforce username uniqueness (check before signup; handle collision)
-- [ ] 3.3.4 Signin with username+password (lookup username->email or use custom auth; document approach)
-- [ ] 3.3.5 Session persistence (onAuthStateChange)
+- [~] 3.3.1 Supabase Auth (email/password) - still username+password login UX; email stored in auth.users
+- [x] 3.3.2 Signup: create auth user, create profile row (display_name, username, email, avatar_url null)
+- [x] 3.3.3 Enforce username uniqueness (check before signup; handle collision)
+- [~] 3.3.4 Signin with username+password (lookup username->email or use custom auth; document approach)
+- [~] 3.3.5 Session persistence (onAuthStateChange)
 - [ ] 3.3.6 Route guards based on auth state
 - [ ] 3.3.7 Edit profile: update display_name, username (check unique), avatar_url
 - [ ] 3.3.8 Delete account: delete profile + auth user (handle cascades)

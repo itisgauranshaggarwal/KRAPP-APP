@@ -109,10 +109,20 @@ export function ProfilePage() {
 
   async function handleDeleteAccount() {
     setDeleting(true)
-    await deleteAccount()
-    setConfirmDelete(false)
-    pushToast({ title: 'Account deleted', description: 'All of your data was removed.' })
-    navigate('/login', { replace: true })
+    try {
+      await deleteAccount()
+      setConfirmDelete(false)
+      pushToast({ title: 'Account deleted', description: 'All of your data was removed.' })
+      navigate('/login', { replace: true })
+    } catch (error) {
+      pushToast({
+        title: 'Account deletion unavailable',
+        description: error instanceof Error ? error.message : 'Try again later.',
+        tone: 'danger',
+      })
+    } finally {
+      setDeleting(false)
+    }
   }
 
   const themes: { value: ThemeMode; label: string; icon: typeof Sun }[] = [
