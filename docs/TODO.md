@@ -72,10 +72,10 @@ This is the master todo list. Work in the specified order: UI -> UX -> Realtime 
 ### 3.1 Supabase Setup
 - [ ] 3.1.1 Create Supabase project (free tier)
 - [ ] 3.1.2 Get API keys (anon, service role if needed later) and URL
-- [ ] 3.1.3 Configure environment variables (.env.local, .env.example)
+- [x] 3.1.3 Configure environment variable template (`.env.example`) and typed runtime boundary (`src/lib/supabase-config.ts`)
 - [ ] 3.1.4 Install Supabase JS client
 - [ ] 3.1.5 Test connection
-- [ ] 3.1.6 Document keys setup in README/DOCS
+- [x] 3.1.6 Document keys setup in README/DOCS
 
 ### 3.2 Database Schema
 - [x] 3.2.1 Design tables: profiles, private account profiles, contacts, conversations, messages

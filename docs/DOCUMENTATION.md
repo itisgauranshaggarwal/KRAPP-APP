@@ -140,6 +140,8 @@ To be filled during implementation.
 
 **Phase 3 (next):** Supabase Auth with email+password. Because the UI is username+password, resolve `username → email` through a narrowly scoped server-side RPC/Edge Function, then sign in. Session via `onAuthStateChange`. Signup creates the auth user plus `profiles` and `account_profiles` rows. Delete account cascades profile data; deleting `auth.users` requires a trusted Edge Function because the anon key must never receive service-role access. Replace the mock function bodies; keep the same `useSession()` surface so pages and guards don't change.
 
+**Configuration boundary:** `src/lib/supabase-config.ts` reads only `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`. The app remains mock-backed until both values exist and the migration has been applied. Never place the service-role key in `.env.local` for this browser app.
+
 ## 9. Contacts & Invite Flow
 
 1. Click "New Contact" -> search username.

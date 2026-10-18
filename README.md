@@ -40,6 +40,7 @@ npm run lint
 - [PRD](docs/PRD.md) - Product requirements
 - [TODO](docs/TODO.md) - Phased task list
 - [DOCUMENTATION](docs/DOCUMENTATION.md) - Full technical docs + session continuity
+- [PHASE 3 SETUP](docs/PHASE3_SETUP.md) - Supabase setup, required inputs, and integration order
 
 ## Resume Work
 See `docs/SESSION_RESUME.md` for instructions to reopen this session and continue.
