@@ -27,6 +27,7 @@ const STORAGE_KEY = 'krapp.session'
 const LATENCY_MS = 500
 
 export interface SessionUser {
+  id?: string
   username: string
   displayName: string
   email?: string
@@ -72,6 +73,7 @@ async function loadSupabaseUser(userId: string): Promise<SessionUser> {
   }
 
   return {
+    id: userId,
     username: profile.username,
     displayName: profile.display_name,
     email: account.email,
